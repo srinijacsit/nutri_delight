@@ -1,0 +1,41 @@
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/.gitignore b/.gitignore[m
+[1mindex 5ef6a52..cd23bc6 100644[m
+[1m--- a/.gitignore[m
+[1m+++ b/.gitignore[m
+[36m@@ -1,7 +1,7 @@[m
+ # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.[m
+ [m
+ # dependencies[m
+[31m-/node_modules[m
+[32m+[m[32mnode_modules[m
+ /.pnp[m
+ .pnp.*[m
+ .yarn/*[m
+[36m@@ -11,14 +11,14 @@[m
+ !.yarn/versions[m
+ [m
+ # testing[m
+[31m-/coverage[m
+[32m+[m[32mcoverage[m
+ [m
+ # next.js[m
+[31m-/.next/[m
+[31m-/out/[m
+[32m+[m[32m.next/[m
+[32m+[m[32mout/[m
+ [m
+ # production[m
+[31m-/build[m
+[32m+[m[32mbuild[m
+ [m
+ # misc[m
+ .DS_Store[m
+[36m@@ -39,3 +39,7 @@[m [myarn-error.log*[m
+ # typescript[m
+ *.tsbuildinfo[m
+ next-env.d.ts[m
+[32m+[m
+[32m+[m[32m# AI instructions[m
+[32m+[m[32mAGENTS.md[m
+[32m+[m[32mCLAUDE.md[m

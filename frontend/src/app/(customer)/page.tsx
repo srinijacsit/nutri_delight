@@ -29,7 +29,7 @@ export default function CustomerHome() {
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
               href="/menu"
-              className="group inline-flex items-center justify-center rounded-full bg-green-900 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:bg-green-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-900 active:scale-95"
+              className="group inline-flex items-center justify-center rounded-full bg-green-900 px-8 py-3.5 text-base font-semibold text-white shadow-sm transition-all hover:bg-green-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-900 active:scale-95"
             >
               Explore Menu
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
@@ -49,7 +49,7 @@ export default function CustomerHome() {
             {categories.map((category) => (
               <div 
                 key={category} 
-                className="mr-4 inline-flex w-[140px] shrink-0 snap-start flex-col items-center justify-center rounded-2xl border border-green-100 bg-green-50/50 p-4 text-center transition-colors hover:bg-green-50 sm:mr-0 sm:w-auto sm:p-6"
+                className="mr-4 inline-flex w-35 shrink-0 snap-start flex-col items-center justify-center rounded-2xl border border-green-100 bg-green-50/50 p-4 text-center transition-colors hover:bg-green-50 sm:mr-0 sm:w-auto sm:p-6"
               >
                 <span className="text-sm font-semibold text-green-900">{category}</span>
               </div>
@@ -90,7 +90,7 @@ export default function CustomerHome() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-3xl bg-green-950 px-6 py-16 shadow-xl sm:px-12 sm:py-20 md:px-16 lg:flex lg:items-center lg:justify-between lg:px-24 lg:py-20">
             {/* Decorative background gradient */}
-            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-green-400 via-green-800 to-green-950" aria-hidden="true"></div>
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-green-400 via-green-800 to-green-950" aria-hidden="true"></div>
             
             <div className="relative max-w-xl text-center lg:text-left">
               <h2 id="bulk-order-heading" className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
@@ -104,7 +104,7 @@ export default function CustomerHome() {
             <div className="relative mt-10 flex justify-center lg:mt-0 lg:shrink-0">
               <Link
                 href="/bulk-order"
-                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold text-green-950 shadow-sm transition-colors hover:bg-green-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-95"
+                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold text-green-950 shadow-sm transition-colors hover:bg-green-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white active:scale-95"
               >
                 Learn About Bulk Orders
               </Link>
