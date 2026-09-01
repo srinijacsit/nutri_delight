@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/contexts/cart-context";
-import { ArrowLeft, ShoppingBag, CheckCircle } from "lucide-react";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
 
 export default function CheckoutPage() {
   const { items, totalItems, totalPrice, isHydrated, clearCart } = useCart();
@@ -22,14 +22,13 @@ export default function CheckoutPage() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   // Wait for hydration
   if (!isHydrated) {
     return <div className="min-h-screen bg-[#FCFBF8]"></div>;
   }
 
-  if (items.length === 0 && !isSuccess) {
+  if (items.length === 0) {
     return (
       <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
         <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
@@ -44,29 +43,6 @@ export default function CheckoutPage() {
           >
             Browse Menu
           </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
-          <div className="mx-auto w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle className="w-8 h-8 text-green-600" />
-          </div>
-          <h1 className="text-2xl font-extrabold text-stone-900 mb-2">Order Prepared</h1>
-          <p className="text-stone-500 mb-8">Your order payload is ready for backend integration.</p>
-          <button
-            onClick={() => {
-              clearCart();
-              router.push("/menu");
-            }}
-            className="flex items-center justify-center w-full rounded-full bg-stone-900 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-stone-800 active:scale-95 transition-all"
-          >
-            Start New Order
-          </button>
         </div>
       </div>
     );
@@ -124,8 +100,9 @@ export default function CheckoutPage() {
       
       // Simulate network request
       setTimeout(() => {
-        setIsSubmitting(false);
-        setIsSuccess(true);
+        sessionStorage.setItem("nutridelight-last-order", JSON.stringify(orderPayload));
+        clearCart();
+        router.push("/confirmation");
       }, 1000);
     }
   };
