@@ -36,10 +36,10 @@ export function MobileNav() {
   }, [isOpen]);
 
   return (
-    <div className="md:hidden flex items-center">
+    <>
       <button
         onClick={() => setIsOpen(true)}
-        className="p-2 -mr-2 text-green-950 hover:bg-green-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-md transition-colors"
+        className="p-2 -ml-2 text-stone-700 hover:bg-stone-100 rounded-full transition-colors active:scale-95"
         aria-label="Open main menu"
         aria-expanded={isOpen}
       >
@@ -50,38 +50,38 @@ export function MobileNav() {
         <div className="fixed inset-0 z-50 flex">
           {/* Overlay */}
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-stone-900/40 backdrop-blur-sm transition-opacity"
             aria-hidden="true"
             onClick={() => setIsOpen(false)}
           />
 
           {/* Drawer */}
           <nav
-            className="relative flex w-4/5 max-w-sm flex-col bg-white h-full shadow-2xl animate-in slide-in-from-left duration-300 z-50"
+            className="relative flex w-[85%] max-w-sm flex-col bg-white h-full shadow-2xl animate-in slide-in-from-left duration-200 z-50"
             aria-label="Mobile navigation"
           >
-            <div className="flex items-center justify-between p-4 border-b border-green-100">
-              <span className="font-bold text-green-950 text-xl tracking-tight">Nutri Delight</span>
+            <div className="flex items-center justify-between p-4 border-b border-stone-100">
+              <span className="font-extrabold text-stone-900 text-lg tracking-tight">Navigation</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 -mr-2 text-green-700 hover:text-green-900 hover:bg-green-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-md transition-colors"
+                className="p-2 -mr-2 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors"
                 aria-label="Close menu"
               >
-                <X className="w-6 h-6" aria-hidden="true" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
 
-            <div className="px-4 py-6 space-y-1 overflow-y-auto">
+            <div className="px-3 py-4 space-y-1 overflow-y-auto">
               {mainNav.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`block px-4 py-3 rounded-lg text-base font-medium transition-colors ${
+                    className={`block px-4 py-3 rounded-xl text-base font-bold transition-colors ${
                       isActive
-                        ? "bg-green-100 text-green-900"
-                        : "text-green-800 hover:bg-green-50 hover:text-green-950"
+                        ? "bg-green-50 text-green-700"
+                        : "text-stone-700 hover:bg-stone-50 hover:text-stone-900"
                     }`}
                     aria-current={isActive ? "page" : undefined}
                   >
@@ -93,6 +93,6 @@ export function MobileNav() {
           </nav>
         </div>
       )}
-    </div>
+    </>
   );
 }
