@@ -41,20 +41,25 @@ export default function CartPage() {
           {/* Cart Items List */}
           <div className="lg:col-span-7 xl:col-span-8 space-y-4">
             {items.map((item) => (
-              <div key={item.product.id} className="bg-white rounded-2xl p-4 sm:p-6 border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
+              <div key={item.cartItemId} className="bg-white rounded-2xl p-4 sm:p-6 border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
                 
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
-                    <h3 className="text-lg font-bold text-stone-900 line-clamp-2 pr-4">{item.product.name}</h3>
-                    <span className="text-lg font-extrabold text-stone-900 whitespace-nowrap">₹{item.product.price * item.quantity}</span>
+                    <h3 className="text-lg font-bold text-stone-900 line-clamp-2 pr-4">
+                      {item.product.name}
+                    </h3>
+                    <span className="text-lg font-extrabold text-stone-900 whitespace-nowrap">₹{item.unitPrice * item.quantity}</span>
                   </div>
-                  <p className="text-sm font-medium text-stone-500 mb-4 sm:mb-0">₹{item.product.price} each</p>
+                  {item.option && (
+                    <p className="text-sm font-semibold text-green-700 mb-1">+ {item.option.name} (₹{item.option.price})</p>
+                  )}
+                  <p className="text-sm font-medium text-stone-500 mb-4 sm:mb-0">₹{item.unitPrice} each</p>
                 </div>
 
                 <div className="flex items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0">
                   <div className="flex items-center gap-3 bg-stone-100 rounded-full px-1 py-1 shrink-0">
                     <button
-                      onClick={() => decrementItem(item.product.id)}
+                      onClick={() => decrementItem(item.cartItemId)}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-stone-900 shadow-sm transition-colors hover:bg-stone-50 active:scale-95"
                       aria-label={`Decrease quantity of ${item.product.name}`}
                     >
@@ -64,7 +69,7 @@ export default function CartPage() {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => incrementItem(item.product.id)}
+                      onClick={() => incrementItem(item.cartItemId)}
                       className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-stone-900 shadow-sm transition-colors hover:bg-stone-50 active:scale-95"
                       aria-label={`Increase quantity of ${item.product.name}`}
                     >
@@ -72,7 +77,7 @@ export default function CartPage() {
                     </button>
                   </div>
                   <button
-                    onClick={() => removeItem(item.product.id)}
+                    onClick={() => removeItem(item.cartItemId)}
                     className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors shrink-0"
                     aria-label={`Remove ${item.product.name} from cart`}
                   >
