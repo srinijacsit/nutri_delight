@@ -77,6 +77,7 @@ export default function CheckoutPage() {
       
       // Mock order preparation logic
       const orderPayload = {
+        date: new Date().toISOString(),
         customer: {
           name: formData.name,
           phone: formData.phone,
@@ -100,6 +101,12 @@ export default function CheckoutPage() {
       
       // Simulate network request
       setTimeout(() => {
+        // Temporary frontend order history persistence
+        const historyStr = localStorage.getItem("nutridelight-order-history");
+        const history = historyStr ? JSON.parse(historyStr) : [];
+        history.unshift(orderPayload);
+        localStorage.setItem("nutridelight-order-history", JSON.stringify(history));
+
         sessionStorage.setItem("nutridelight-last-order", JSON.stringify(orderPayload));
         clearCart();
         router.push("/confirmation");
