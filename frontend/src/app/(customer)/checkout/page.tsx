@@ -25,21 +25,22 @@ export default function CheckoutPage() {
 
   // Wait for hydration
   if (!isHydrated) {
-    return <div className="min-h-screen bg-[#FCFBF8]"></div>;
+    return <div className="min-h-screen bg-background"></div>;
   }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
-          <div className="mx-auto w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-6">
-            <ShoppingBag className="w-8 h-8 text-stone-400" />
+      <div className="min-h-screen bg-background flex flex-col items-center p-4 pt-24">
+        <div className="bg-card p-10 rounded-[2rem] border border-border shadow-xl text-center max-w-md w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
+          <div className="relative mx-auto w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-8 ring-8 ring-primary/5">
+            <ShoppingBag className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-2xl font-extrabold text-stone-900 mb-2">Cart is empty</h1>
-          <p className="text-stone-500 mb-8">You need items in your cart to checkout.</p>
+          <h1 className="relative text-3xl font-extrabold text-foreground mb-3 tracking-tight">Cart is empty</h1>
+          <p className="relative text-base text-foreground/60 mb-10 leading-relaxed">You need items in your cart to checkout.</p>
           <Link
             href="/menu"
-            className="flex items-center justify-center w-full rounded-full bg-green-600 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-green-700 active:scale-95 transition-all"
+            className="relative flex items-center justify-center w-full rounded-full bg-primary px-8 py-5 text-base font-bold text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
           >
             Browse Menu
           </Link>
@@ -124,26 +125,26 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <Link href="/cart" className="inline-flex items-center text-sm font-bold text-stone-500 hover:text-stone-900 mb-6 transition-colors">
+        <Link href="/cart" className="inline-flex items-center text-sm font-bold text-foreground/60 hover:text-primary mb-8 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Cart
         </Link>
         
-        <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight mb-8">Checkout</h1>
+        <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-10">Checkout</h1>
         
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start">
           
           {/* Customer Details Form */}
           <div className="lg:col-span-7 xl:col-span-8">
-            <form id="checkout-form" onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm">
-              <h2 className="text-xl font-bold text-stone-900 mb-6">Contact Information</h2>
+            <form id="checkout-form" onSubmit={handleSubmit} className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm">
+              <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Contact Information</h2>
               
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-bold text-stone-700 mb-2">
-                    Full Name <span className="text-red-500">*</span>
+                  <label htmlFor="name" className="block text-sm font-bold text-foreground/80 mb-2">
+                    Full Name <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="text"
@@ -151,15 +152,15 @@ export default function CheckoutPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className={`block w-full rounded-lg border bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-600 transition-colors ${errors.name ? 'border-red-500' : 'border-stone-200'}`}
+                    className={`block w-full rounded-xl border bg-background py-4 px-5 text-foreground font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all ${errors.name ? 'border-destructive' : 'border-border'}`}
                     placeholder="Enter your name"
                   />
-                  {errors.name && <p className="mt-2 text-sm text-red-600 font-medium">{errors.name}</p>}
+                  {errors.name && <p className="mt-2 text-sm text-destructive font-medium">{errors.name}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-bold text-stone-700 mb-2">
-                    Phone Number <span className="text-red-500">*</span>
+                  <label htmlFor="phone" className="block text-sm font-bold text-foreground/80 mb-2">
+                    Phone Number <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="tel"
@@ -167,23 +168,23 @@ export default function CheckoutPage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className={`block w-full rounded-lg border bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-600 transition-colors ${errors.phone ? 'border-red-500' : 'border-stone-200'}`}
+                    className={`block w-full rounded-xl border bg-background py-4 px-5 text-foreground font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all ${errors.phone ? 'border-destructive' : 'border-border'}`}
                     placeholder="Enter 10-digit mobile number"
                   />
-                  {errors.phone && <p className="mt-2 text-sm text-red-600 font-medium">{errors.phone}</p>}
+                  {errors.phone && <p className="mt-2 text-sm text-destructive font-medium">{errors.phone}</p>}
                 </div>
 
                 <div>
-                  <label htmlFor="notes" className="block text-sm font-bold text-stone-700 mb-2">
+                  <label htmlFor="notes" className="block text-sm font-bold text-foreground/80 mb-2">
                     Order Notes (Optional)
                   </label>
                   <textarea
                     id="notes"
                     name="notes"
-                    rows={3}
+                    rows={4}
                     value={formData.notes}
                     onChange={handleChange}
-                    className="block w-full rounded-lg border border-stone-200 bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-green-600 transition-colors"
+                    className="block w-full rounded-xl border border-border bg-background py-4 px-5 text-foreground font-medium focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                     placeholder="Any special instructions?"
                   />
                 </div>
@@ -192,24 +193,25 @@ export default function CheckoutPage() {
           </div>
 
           {/* Order Review */}
-          <div className="mt-8 lg:mt-0 lg:col-span-5 xl:col-span-4">
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm sticky top-24">
-              <h2 className="text-xl font-bold text-stone-900 mb-6">Order Review</h2>
+          <div className="mt-10 lg:mt-0 lg:col-span-5 xl:col-span-4">
+            <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-xl sticky top-32 overflow-hidden">
+              <div className="absolute inset-0 bg-linear-to-b from-stone-50/50 to-transparent pointer-events-none" />
+              <h2 className="relative text-2xl font-extrabold text-foreground mb-8 tracking-tight">Order Review</h2>
               
-              <div className="flow-root mb-6 max-h-[40vh] overflow-y-auto pr-2">
-                <ul className="divide-y divide-stone-100">
+              <div className="relative flow-root mb-8 max-h-[40vh] overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
+                <ul className="divide-y divide-border">
                   {items.map((item) => (
-                    <li key={item.cartItemId} className="py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                    <li key={item.cartItemId} className="py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div className="flex-1">
-                        <h4 className="text-sm font-bold text-stone-900">{item.product.name}</h4>
+                        <h4 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">{item.product.name}</h4>
                         {item.option && (
-                          <p className="text-xs font-semibold text-green-700 mt-0.5">
+                          <p className="inline-block px-2 py-0.5 mt-1 rounded bg-primary/10 text-[11px] font-bold text-primary">
                             + {item.option.name}
                           </p>
                         )}
-                        <p className="text-xs text-stone-500 mt-1">Qty: {item.quantity} × ₹{item.unitPrice}</p>
+                        <p className="text-xs font-medium text-foreground/60 mt-1.5">Qty: {item.quantity} × ₹{item.unitPrice}</p>
                       </div>
-                      <div className="text-sm font-extrabold text-stone-900 sm:text-right">
+                      <div className="text-base font-extrabold text-foreground sm:text-right tracking-tight">
                         ₹{item.unitPrice * item.quantity}
                       </div>
                     </li>
@@ -217,14 +219,14 @@ export default function CheckoutPage() {
                 </ul>
               </div>
               
-              <dl className="space-y-4 text-sm text-stone-600 mb-6 pt-4 border-t border-stone-100">
-                <div className="flex justify-between pb-4 border-b border-stone-100">
-                  <dt>Items ({totalItems})</dt>
-                  <dd className="font-medium text-stone-900">₹{totalPrice}</dd>
+              <dl className="relative space-y-5 text-base text-foreground/70 mb-8 pt-6 border-t border-border">
+                <div className="flex justify-between pb-5 border-b border-border">
+                  <dt className="font-medium">Items ({totalItems})</dt>
+                  <dd className="font-bold text-foreground">₹{totalPrice}</dd>
                 </div>
-                <div className="flex justify-between pt-2">
-                  <dt className="text-base font-bold text-stone-900">Total to pay</dt>
-                  <dd className="text-lg font-extrabold text-stone-900">₹{totalPrice}</dd>
+                <div className="flex justify-between pt-3">
+                  <dt className="text-lg font-bold text-foreground">Total to pay</dt>
+                  <dd className="text-2xl font-extrabold text-foreground tracking-tight">₹{totalPrice}</dd>
                 </div>
               </dl>
 
@@ -232,7 +234,7 @@ export default function CheckoutPage() {
                 type="submit"
                 form="checkout-form"
                 disabled={isSubmitting}
-                className="w-full flex items-center justify-center rounded-full bg-green-600 px-6 py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-green-700 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="relative w-full flex items-center justify-center rounded-full bg-primary px-8 py-5 text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:shadow-xl hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {isSubmitting ? "Processing..." : "Place Order"}
               </button>

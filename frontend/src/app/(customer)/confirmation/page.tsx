@@ -45,21 +45,22 @@ export default function ConfirmationPage() {
   }, []);
 
   if (isLoading) {
-    return <div className="min-h-screen bg-[#FCFBF8]"></div>;
+    return <div className="min-h-screen bg-background"></div>;
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
-          <div className="mx-auto w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-6">
-            <ShoppingBag className="w-8 h-8 text-stone-400" />
+      <div className="min-h-screen bg-background flex flex-col items-center p-4 pt-24">
+        <div className="bg-card p-10 rounded-[2rem] border border-border shadow-xl text-center max-w-md w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
+          <div className="relative mx-auto w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-8 ring-8 ring-primary/5">
+            <ShoppingBag className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-2xl font-extrabold text-stone-900 mb-2">No Order Found</h1>
-          <p className="text-stone-500 mb-8">We couldn&apos;t find your recent order details.</p>
+          <h1 className="relative text-3xl font-extrabold text-foreground mb-3 tracking-tight">No Order Found</h1>
+          <p className="relative text-base text-foreground/60 mb-10 leading-relaxed">We couldn&apos;t find your recent order details.</p>
           <Link
             href="/menu"
-            className="flex items-center justify-center w-full rounded-full bg-green-600 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-green-700 active:scale-95 transition-all"
+            className="relative flex items-center justify-center w-full rounded-full bg-primary px-8 py-5 text-base font-bold text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
           >
             Browse Menu
           </Link>
@@ -69,84 +70,85 @@ export default function ConfirmationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm mb-8 text-center">
-          <div className="mx-auto w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-6">
-            <CheckCircle className="w-8 h-8 text-green-600" />
+        <div className="bg-card rounded-[2rem] p-8 sm:p-12 border border-border shadow-xl mb-10 text-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-green-500/10 to-transparent pointer-events-none" />
+          <div className="relative mx-auto w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-8 ring-8 ring-green-500/10">
+            <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight mb-2">Order Prepared</h1>
-          <p className="text-stone-500">
+          <h1 className="relative text-4xl font-extrabold text-foreground tracking-tight mb-4">Order Prepared</h1>
+          <p className="relative text-lg text-foreground/70 max-w-lg mx-auto">
             Your order payload is ready for backend integration. We have saved your details locally for review.
           </p>
         </div>
         
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm mb-8">
-          <h2 className="text-xl font-bold text-stone-900 mb-6">Customer Details</h2>
-          <dl className="space-y-4 text-sm">
-            <div className="grid grid-cols-3 gap-4 border-b border-stone-100 pb-4">
-              <dt className="text-stone-500 font-medium col-span-1">Name</dt>
-              <dd className="text-stone-900 font-bold col-span-2">{order.customer.name}</dd>
+        <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm mb-10">
+          <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Customer Details</h2>
+          <dl className="space-y-6 text-base">
+            <div className="grid grid-cols-3 gap-4 border-b border-border pb-5">
+              <dt className="text-foreground/60 font-bold col-span-1">Name</dt>
+              <dd className="text-foreground font-bold col-span-2">{order.customer.name}</dd>
             </div>
-            <div className="grid grid-cols-3 gap-4 border-b border-stone-100 pb-4">
-              <dt className="text-stone-500 font-medium col-span-1">Phone</dt>
-              <dd className="text-stone-900 font-bold col-span-2">{order.customer.phone}</dd>
+            <div className="grid grid-cols-3 gap-4 border-b border-border pb-5">
+              <dt className="text-foreground/60 font-bold col-span-1">Phone</dt>
+              <dd className="text-foreground font-bold col-span-2">{order.customer.phone}</dd>
             </div>
             {order.customer.notes && (
-              <div className="grid grid-cols-3 gap-4 border-b border-stone-100 pb-4">
-                <dt className="text-stone-500 font-medium col-span-1">Notes</dt>
-                <dd className="text-stone-900 font-bold col-span-2">{order.customer.notes}</dd>
+              <div className="grid grid-cols-3 gap-4 border-b border-border pb-5">
+                <dt className="text-foreground/60 font-bold col-span-1">Notes</dt>
+                <dd className="text-foreground font-bold col-span-2 italic">{order.customer.notes}</dd>
               </div>
             )}
           </dl>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm mb-8">
-          <h2 className="text-xl font-bold text-stone-900 mb-6">Order Summary</h2>
-          <ul className="divide-y divide-stone-100 mb-6 border-b border-stone-100">
+        <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm mb-10">
+          <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Order Summary</h2>
+          <ul className="divide-y divide-border mb-8 border-b border-border">
             {order.items.map((item, idx) => (
-              <li key={idx} className="py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+              <li key={idx} className="py-5 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex-1">
-                  <h4 className="text-sm font-bold text-stone-900">{item.name}</h4>
+                  <h4 className="text-base font-bold text-foreground">{item.name}</h4>
                   {item.option && (
-                    <p className="text-xs font-semibold text-green-700 mt-0.5">
+                    <p className="inline-block px-2 py-0.5 mt-1.5 rounded bg-primary/10 text-[11px] font-bold text-primary">
                       + {item.option}
                     </p>
                   )}
-                  <p className="text-xs text-stone-500 mt-1">Qty: {item.quantity} × ₹{item.unitPrice}</p>
+                  <p className="text-sm font-medium text-foreground/60 mt-2">Qty: {item.quantity} × ₹{item.unitPrice}</p>
                 </div>
-                <div className="text-sm font-extrabold text-stone-900 sm:text-right">
+                <div className="text-base font-extrabold text-foreground sm:text-right tracking-tight">
                   ₹{item.lineTotal}
                 </div>
               </li>
             ))}
           </ul>
           
-          <dl className="space-y-4 text-sm text-stone-600">
+          <dl className="space-y-5 text-base text-foreground/70">
             <div className="flex justify-between">
-              <dt>Total Items</dt>
-              <dd className="font-medium text-stone-900">{order.summary.totalItems}</dd>
+              <dt className="font-medium">Total Items</dt>
+              <dd className="font-bold text-foreground">{order.summary.totalItems}</dd>
             </div>
-            <div className="flex justify-between pt-4 border-t border-stone-100">
-              <dt className="text-base font-bold text-stone-900">Total Paid</dt>
-              <dd className="text-lg font-extrabold text-stone-900">₹{order.summary.totalPrice}</dd>
+            <div className="flex justify-between pt-5 border-t border-border">
+              <dt className="text-lg font-bold text-foreground">Total Paid</dt>
+              <dd className="text-2xl font-extrabold text-foreground tracking-tight">₹{order.summary.totalPrice}</dd>
             </div>
           </dl>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-5">
           <Link
             href="/menu"
-            className="flex-1 flex items-center justify-center rounded-full bg-stone-100 px-6 py-4 text-sm font-bold text-stone-900 shadow-sm hover:bg-stone-200 active:scale-95 transition-all"
+            className="flex-1 flex items-center justify-center rounded-full bg-stone-100 px-8 py-5 text-base font-bold text-foreground shadow-sm hover:bg-stone-200 active:scale-95 transition-all"
           >
             Continue Shopping
           </Link>
           <Link
             href="/orders"
-            className="flex-1 flex items-center justify-center rounded-full bg-stone-900 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-stone-800 active:scale-95 transition-all group"
+            className="flex-1 flex items-center justify-center rounded-full bg-stone-900 px-8 py-5 text-base font-bold text-white shadow-lg hover:bg-stone-800 active:scale-95 transition-all group"
           >
             View Orders
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 

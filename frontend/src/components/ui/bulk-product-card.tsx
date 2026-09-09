@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Product } from "@/lib/types";
 import { useBulkCart } from "@/contexts/bulk-cart-context";
 import { CartOption } from "@/contexts/cart-context";
+import { getProductImage } from "@/lib/image-mapping";
 
 interface BulkProductCardProps {
   product: Product;
@@ -39,6 +41,7 @@ export function BulkProductCard({ product }: BulkProductCardProps) {
   const quantityInCart = cartItem?.quantity || 0;
 
   const displayPrice = product.price + (selectedOption?.price || 0);
+  const imageSrc = getProductImage(product.id);
 
   const handleAdd = () => {
     const qty = parseInt(inputQuantity, 10);
@@ -57,64 +60,79 @@ export function BulkProductCard({ product }: BulkProductCardProps) {
   };
 
   return (
-    <div className="flex flex-col justify-between rounded-[1.25rem] border border-stone-200 bg-white p-5 shadow-sm transition-all hover:shadow-md hover:border-blue-200 group">
-      <div className="space-y-3">
-        <span className="inline-block rounded-full bg-stone-100 px-3 py-1 text-[10px] font-bold text-stone-600 uppercase tracking-wider">
-          {product.category}
-        </span>
-        <h3 className="text-lg font-bold text-stone-900 group-hover:text-blue-700 transition-colors line-clamp-2">
-          {product.name}
-        </h3>
+    <div className="flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all hover:shadow-lg hover:border-primary/20 group">
+      {/* Product Image */}
+      <div className="relative aspect-4/3 w-full overflow-hidden bg-muted">
+        <Image 
+          src={imageSrc} 
+          alt={product.name} 
+          fill 
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105" 
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       </div>
-      
-      {availableOptions && (
-        <div className="mt-4">
-          <label htmlFor={`bulk-options-${product.id}`} className="sr-only">Choose option</label>
-          <select
-            id={`bulk-options-${product.id}`}
-            value={selectedOptionName}
-            onChange={(e) => setSelectedOptionName(e.target.value)}
-            className="block w-full rounded-lg border-stone-200 bg-stone-50 py-2 pl-3 pr-8 text-sm text-stone-900 focus:border-blue-600 focus:ring-blue-600 outline-none"
-          >
-            {availableOptions.map((opt) => (
-              <option key={opt.name} value={opt.name}>
-                {opt.name} {opt.price > 0 ? `(+₹${opt.price})` : ""}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
 
-      <div className="mt-6">
-        <span className="block text-xl font-extrabold text-stone-900 mb-2">₹{displayPrice}</span>
-        
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-             <label htmlFor={`bulk-qty-${product.id}`} className="sr-only">Quantity</label>
-             <input
-               type="number"
-               id={`bulk-qty-${product.id}`}
-               min="1"
-               value={inputQuantity}
-               onChange={(e) => setInputQuantity(e.target.value)}
-               className="block w-full rounded-lg border border-stone-200 bg-white py-2 px-3 text-sm text-stone-900 focus:border-blue-600 focus:ring-blue-600 outline-none"
-               placeholder="Qty"
-             />
-          </div>
-          <button 
-            onClick={handleAdd}
-            className="flex h-[38px] items-center justify-center rounded-lg bg-blue-600 px-4 text-sm font-bold text-white transition-colors hover:bg-blue-700 active:scale-95 shrink-0"
-            aria-label={`Add ${product.name} to bulk cart`}
-          >
-            Add
-          </button>
+      <div className="flex flex-col flex-1 p-5 lg:p-6">
+        <div className="space-y-3 mb-4 flex-1">
+          <span className="inline-block rounded-full bg-stone-100 px-3 py-1 text-[10px] font-extrabold text-foreground/70 uppercase tracking-widest">
+            {product.category}
+          </span>
+          <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+            {product.name}
+          </h3>
         </div>
         
-        {quantityInCart > 0 && (
-          <p className="mt-2 text-xs font-semibold text-blue-700">
-            {quantityInCart} currently in bulk cart
-          </p>
+        {availableOptions && (
+          <div className="mb-4">
+            <label htmlFor={`bulk-options-${product.id}`} className="sr-only">Choose option</label>
+            <select
+              id={`bulk-options-${product.id}`}
+              value={selectedOptionName}
+              onChange={(e) => setSelectedOptionName(e.target.value)}
+              className="block w-full rounded-xl border border-border bg-background py-2.5 pl-4 pr-10 text-sm font-medium text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-shadow appearance-none"
+              style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em' }}
+            >
+              {availableOptions.map((opt) => (
+                <option key={opt.name} value={opt.name}>
+                  {opt.name} {opt.price > 0 ? `(+₹${opt.price})` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
         )}
+
+        <div className="mt-auto">
+          <span className="block text-2xl font-extrabold text-foreground mb-3 tracking-tight">₹{displayPrice}</span>
+          
+          <div className="flex items-center gap-3">
+            <div className="relative w-24">
+               <label htmlFor={`bulk-qty-${product.id}`} className="sr-only">Quantity</label>
+               <input
+                 type="number"
+                 id={`bulk-qty-${product.id}`}
+                 min="1"
+                 value={inputQuantity}
+                 onChange={(e) => setInputQuantity(e.target.value)}
+                 className="block w-full rounded-xl border border-border bg-background py-3 px-4 text-sm font-bold text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none text-center"
+                 placeholder="Qty"
+               />
+            </div>
+            <button 
+              onClick={handleAdd}
+              className="flex flex-1 h-12 items-center justify-center rounded-xl bg-primary px-4 text-sm font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow active:scale-95 shrink-0"
+              aria-label={`Add ${product.name} to bulk cart`}
+            >
+              Add to Bulk
+            </button>
+          </div>
+          
+          {quantityInCart > 0 && (
+            <p className="mt-3 text-xs font-bold text-primary bg-primary/5 rounded-full px-3 py-1.5 inline-block">
+              {quantityInCart} currently in bulk cart
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

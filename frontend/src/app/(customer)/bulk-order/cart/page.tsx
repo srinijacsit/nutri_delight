@@ -8,21 +8,22 @@ export default function BulkCartPage() {
   const { items, setQuantity, incrementItem, decrementItem, removeItem, totalItems, totalPrice, isHydrated } = useBulkCart();
 
   if (!isHydrated) {
-    return <div className="min-h-screen bg-[#FCFBF8] flex items-center justify-center p-4"></div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center p-4"></div>;
   }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
-          <div className="mx-auto w-16 h-16 bg-stone-50 rounded-full flex items-center justify-center mb-6">
-            <ShoppingBag className="w-8 h-8 text-stone-400" />
+      <div className="min-h-screen bg-background flex flex-col items-center p-4 pt-24">
+        <div className="bg-card p-10 rounded-[2rem] border border-border shadow-xl text-center max-w-md w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
+          <div className="relative mx-auto w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-8 ring-8 ring-primary/5">
+            <ShoppingBag className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-2xl font-extrabold text-stone-900 mb-2">Bulk Cart is empty</h1>
-          <p className="text-stone-500 mb-8">Add items to proceed with your bulk order.</p>
+          <h1 className="relative text-3xl font-extrabold text-foreground mb-3 tracking-tight">Bulk Cart is empty</h1>
+          <p className="relative text-base text-foreground/60 mb-10 leading-relaxed">Add items to proceed with your bulk order.</p>
           <Link
             href="/bulk-order"
-            className="flex items-center justify-center w-full rounded-full bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-blue-700 active:scale-95 transition-all"
+            className="relative flex items-center justify-center w-full rounded-full bg-primary px-8 py-5 text-base font-bold text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
           >
             Browse Bulk Menu
           </Link>
@@ -32,35 +33,37 @@ export default function BulkCartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight mb-8">Bulk Cart</h1>
+        <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-10">Bulk Cart</h1>
         
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
-          <div className="lg:col-span-7 xl:col-span-8 space-y-4">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start">
+          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
             {items.map((item) => (
-              <div key={item.cartItemId} className="bg-white rounded-2xl p-4 sm:p-6 border border-stone-200 shadow-sm flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
+              <div key={item.cartItemId} className="bg-card rounded-[1.5rem] p-5 sm:p-6 border border-border shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-5 sm:items-center justify-between group">
                 
                 <div className="flex-1">
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="text-lg font-bold text-stone-900 line-clamp-2 pr-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-xl font-bold text-foreground line-clamp-2 pr-4 group-hover:text-primary transition-colors">
                       {item.product.name}
                     </h3>
-                    <span className="text-lg font-extrabold text-stone-900 whitespace-nowrap">₹{item.unitPrice * item.quantity}</span>
+                    <span className="text-xl font-extrabold text-foreground whitespace-nowrap tracking-tight">₹{item.unitPrice * item.quantity}</span>
                   </div>
                   {item.option && (
-                    <p className="text-sm font-semibold text-blue-700 mb-1">+ {item.option.name} (₹{item.option.price})</p>
+                    <span className="inline-block px-2.5 py-1 rounded-full bg-primary/10 text-xs font-bold text-primary mb-2">
+                      + {item.option.name} (₹{item.option.price})
+                    </span>
                   )}
-                  <p className="text-sm font-medium text-stone-500 mb-4 sm:mb-0">₹{item.unitPrice} each</p>
+                  <p className="text-sm font-medium text-foreground/50 mb-4 sm:mb-0">₹{item.unitPrice} each</p>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-4 mt-2 sm:mt-0">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-between sm:justify-end gap-6 mt-2 sm:mt-0">
+                  <div className="flex items-center gap-4">
                     <label htmlFor={`cart-qty-${item.cartItemId}`} className="sr-only">Quantity</label>
-                    <div className="flex items-center bg-stone-100 rounded-full px-1 py-1">
+                    <div className="flex items-center bg-stone-100 rounded-full px-1.5 py-1.5 shadow-inner">
                       <button
                         onClick={() => decrementItem(item.cartItemId)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-stone-900 shadow-sm transition-colors hover:bg-stone-50 active:scale-95 shrink-0"
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground shadow-sm transition-colors hover:bg-stone-50 active:scale-95 shrink-0"
                         aria-label={`Decrease quantity`}
                       >
                         <Minus className="w-4 h-4" />
@@ -76,11 +79,11 @@ export default function BulkCartPage() {
                              setQuantity(item.cartItemId, val);
                            }
                         }}
-                        className="w-14 bg-transparent text-center text-sm font-bold text-stone-900 focus:outline-none"
+                        className="w-16 bg-transparent text-center text-sm font-bold text-foreground focus:outline-none"
                       />
                       <button
                         onClick={() => incrementItem(item.cartItemId)}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-stone-900 shadow-sm transition-colors hover:bg-stone-50 active:scale-95 shrink-0"
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 active:scale-95 shrink-0"
                         aria-label={`Increase quantity`}
                       >
                         <Plus className="w-4 h-4" />
@@ -89,7 +92,7 @@ export default function BulkCartPage() {
                   </div>
                   <button
                     onClick={() => removeItem(item.cartItemId)}
-                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors shrink-0"
+                    className="p-3 text-destructive hover:text-destructive/80 hover:bg-destructive/10 rounded-full transition-colors shrink-0 active:scale-95"
                     aria-label={`Remove ${item.product.name} from cart`}
                   >
                     <Trash2 className="w-5 h-5" />
@@ -100,27 +103,28 @@ export default function BulkCartPage() {
             ))}
           </div>
 
-          <div className="mt-8 lg:mt-0 lg:col-span-5 xl:col-span-4">
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm sticky top-24">
-              <h2 className="text-xl font-bold text-stone-900 mb-6">Bulk Order Summary</h2>
+          <div className="mt-10 lg:mt-0 lg:col-span-5 xl:col-span-4">
+            <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-xl sticky top-32 overflow-hidden">
+              <div className="absolute inset-0 bg-linear-to-b from-stone-50/50 to-transparent pointer-events-none" />
+              <h2 className="relative text-2xl font-extrabold text-foreground mb-8 tracking-tight">Bulk Order Summary</h2>
               
-              <dl className="space-y-4 text-sm text-stone-600 mb-6">
-                <div className="flex justify-between pb-4 border-b border-stone-100">
-                  <dt>Items ({totalItems})</dt>
-                  <dd className="font-medium text-stone-900">₹{totalPrice}</dd>
+              <dl className="relative space-y-5 text-base text-foreground/70 mb-8">
+                <div className="flex justify-between pb-5 border-b border-border">
+                  <dt className="font-medium">Items ({totalItems})</dt>
+                  <dd className="font-bold text-foreground">₹{totalPrice}</dd>
                 </div>
-                <div className="flex justify-between pt-2">
-                  <dt className="text-base font-bold text-stone-900">Subtotal</dt>
-                  <dd className="text-lg font-extrabold text-stone-900">₹{totalPrice}</dd>
+                <div className="flex justify-between pt-3">
+                  <dt className="text-lg font-bold text-foreground">Subtotal</dt>
+                  <dd className="text-2xl font-extrabold text-foreground tracking-tight">₹{totalPrice}</dd>
                 </div>
               </dl>
 
               <Link
                 href="/bulk-order/details"
-                className="w-full flex items-center justify-center rounded-full bg-blue-600 px-6 py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 group"
+                className="relative w-full flex items-center justify-center rounded-full bg-primary px-8 py-5 text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-[1.02] active:scale-95 group"
               >
                 Continue to Details
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight className="ml-2 h-6 w-6 transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </Link>
             </div>
           </div>

@@ -39,7 +39,7 @@ export function MobileNav() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="p-2 -ml-2 text-stone-700 hover:bg-stone-100 rounded-full transition-colors active:scale-95"
+        className="p-3 -ml-3 text-foreground/80 hover:bg-stone-100/50 rounded-full transition-colors active:scale-95"
         aria-label="Open main menu"
         aria-expanded={isOpen}
       >
@@ -57,31 +57,31 @@ export function MobileNav() {
 
           {/* Drawer */}
           <nav
-            className="relative flex w-[85%] max-w-sm flex-col bg-white h-full shadow-2xl animate-in slide-in-from-left duration-200 z-50"
+            className="relative flex w-[85%] max-w-sm flex-col bg-background h-full shadow-2xl animate-in slide-in-from-left duration-200 z-50 rounded-r-3xl"
             aria-label="Mobile navigation"
           >
-            <div className="flex items-center justify-between p-4 border-b border-stone-100">
-              <span className="font-extrabold text-stone-900 text-lg tracking-tight">Navigation</span>
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <span className="font-extrabold text-foreground text-xl tracking-tight">Navigation</span>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-2 -mr-2 text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors"
+                className="p-2 -mr-2 text-foreground/60 hover:text-foreground hover:bg-stone-100/50 rounded-full transition-colors"
                 aria-label="Close menu"
               >
-                <X className="w-5 h-5" aria-hidden="true" />
+                <X className="w-6 h-6" aria-hidden="true" />
               </button>
             </div>
 
-            <div className="px-3 py-4 space-y-1 overflow-y-auto">
+            <div className="px-4 py-6 space-y-2 overflow-y-auto">
               {mainNav.map((item) => {
                 const isActive = pathname === item.href;
                 return (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className={`block px-4 py-3 rounded-xl text-base font-bold transition-colors ${
+                    className={`block px-5 py-4 rounded-2xl text-base font-bold transition-colors ${
                       isActive
-                        ? "bg-green-50 text-green-700"
-                        : "text-stone-700 hover:bg-stone-50 hover:text-stone-900"
+                        ? "bg-primary text-primary-foreground shadow-sm"
+                        : "text-foreground/80 hover:bg-stone-100/50 hover:text-foreground"
                     }`}
                     aria-current={isActive ? "page" : undefined}
                   >

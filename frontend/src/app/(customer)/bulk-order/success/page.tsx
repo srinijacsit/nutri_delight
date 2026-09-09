@@ -51,18 +51,19 @@ export default function BulkSuccessPage() {
   }, []);
 
   if (isLoading) {
-    return <div className="min-h-screen bg-[#FCFBF8]"></div>;
+    return <div className="min-h-screen bg-background"></div>;
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
-          <h1 className="text-2xl font-extrabold text-stone-900 mb-2">No Bulk Order Found</h1>
-          <p className="text-stone-500 mb-8">We couldn&apos;t find your recent bulk order details.</p>
+      <div className="min-h-screen bg-background flex flex-col items-center p-4 pt-24">
+        <div className="bg-card p-10 rounded-[2rem] border border-border shadow-xl text-center max-w-md w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
+          <h1 className="relative text-3xl font-extrabold text-foreground mb-3 tracking-tight">No Bulk Order Found</h1>
+          <p className="relative text-base text-foreground/60 mb-10 leading-relaxed">We couldn&apos;t find your recent bulk order details.</p>
           <Link
             href="/bulk-order"
-            className="flex items-center justify-center w-full rounded-full bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-blue-700 active:scale-95 transition-all"
+            className="relative flex items-center justify-center w-full rounded-full bg-primary px-8 py-5 text-base font-bold text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
           >
             Start Bulk Order
           </Link>
@@ -76,98 +77,99 @@ export default function BulkSuccessPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8] py-8 px-4 sm:px-6 lg:px-8 print:bg-white print:py-0">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8 print:bg-white print:py-0">
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm mb-8 text-center print:border-none print:shadow-none print:mb-4">
-          <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-6 print:hidden">
-            <CheckCircle className="w-8 h-8 text-blue-600" />
+        <div className="bg-card rounded-[2rem] p-8 sm:p-12 border border-border shadow-xl mb-10 text-center relative overflow-hidden print:border-none print:shadow-none print:mb-4 print:p-0">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/10 to-transparent pointer-events-none print:hidden" />
+          <div className="relative mx-auto w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mb-8 ring-8 ring-primary/10 print:hidden">
+            <CheckCircle className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight mb-2">Bulk Order Prepared</h1>
-          <p className="text-stone-500 print:hidden">
+          <h1 className="relative text-4xl font-extrabold text-foreground tracking-tight mb-4">Bulk Order Prepared</h1>
+          <p className="relative text-lg text-foreground/70 print:hidden max-w-lg mx-auto">
             Your bulk order details are ready for backend persistence. Review your bill below.
           </p>
         </div>
         
         {/* Bill Preview */}
-        <div className="bg-white rounded-2xl p-6 sm:p-10 border border-stone-200 shadow-sm mb-8 print:border-stone-300 print:shadow-none">
-          <div className="text-center mb-10 pb-10 border-b border-stone-200">
-            <h2 className="text-2xl font-extrabold text-stone-900 tracking-widest uppercase mb-1">Nutri Delight</h2>
-            <p className="text-stone-500 font-medium">Bulk Order Estimate</p>
-            <p className="text-sm text-stone-400 mt-2">Generated: {new Date(order.date).toLocaleString()}</p>
+        <div className="bg-card rounded-[2rem] p-8 sm:p-12 border border-border shadow-sm mb-10 print:border-stone-300 print:shadow-none print:rounded-none">
+          <div className="text-center mb-10 pb-10 border-b border-border">
+            <h2 className="text-3xl font-extrabold text-foreground tracking-widest uppercase mb-2">Nutri Delight</h2>
+            <p className="text-foreground/60 font-bold tracking-widest uppercase text-sm">Bulk Order Estimate</p>
+            <p className="text-sm text-foreground/40 mt-3 font-medium">Generated: {new Date(order.date).toLocaleString()}</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 mb-12">
             <div>
-              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Customer Details</h3>
-              <p className="text-stone-900 font-bold">{order.customer.name}</p>
-              <p className="text-stone-600">{order.customer.phone}</p>
+              <h3 className="text-sm font-extrabold text-foreground/40 uppercase tracking-widest mb-4">Customer Details</h3>
+              <p className="text-foreground font-bold text-lg mb-1">{order.customer.name}</p>
+              <p className="text-foreground/70 font-medium">{order.customer.phone}</p>
             </div>
             <div>
-              <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3">Delivery Schedule</h3>
-              <p className="text-stone-900 font-bold">{order.delivery.date}</p>
-              <p className="text-stone-600">{order.delivery.time}</p>
+              <h3 className="text-sm font-extrabold text-foreground/40 uppercase tracking-widest mb-4">Delivery Schedule</h3>
+              <p className="text-foreground font-bold text-lg mb-1">{order.delivery.date}</p>
+              <p className="text-foreground/70 font-medium">{order.delivery.time}</p>
             </div>
           </div>
 
-          <table className="w-full text-left text-sm mb-10">
-            <thead className="border-b border-stone-200">
+          <table className="w-full text-left text-base mb-10 border-collapse">
+            <thead className="border-b-2 border-border">
               <tr>
-                <th className="py-3 font-bold text-stone-900">Item</th>
-                <th className="py-3 font-bold text-stone-900 text-center">Qty</th>
-                <th className="py-3 font-bold text-stone-900 text-right">Price</th>
-                <th className="py-3 font-bold text-stone-900 text-right">Total</th>
+                <th className="py-4 font-extrabold text-foreground tracking-wide">Item</th>
+                <th className="py-4 font-extrabold text-foreground tracking-wide text-center">Qty</th>
+                <th className="py-4 font-extrabold text-foreground tracking-wide text-right">Price</th>
+                <th className="py-4 font-extrabold text-foreground tracking-wide text-right">Total</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-100">
+            <tbody className="divide-y divide-border/50">
               {order.items.map((item, idx) => (
-                <tr key={idx}>
-                  <td className="py-4">
-                    <p className="font-bold text-stone-900">{item.name}</p>
-                    {item.option && <p className="text-xs text-stone-500 mt-0.5">+ {item.option}</p>}
+                <tr key={idx} className="group hover:bg-stone-50/50 transition-colors print:hover:bg-transparent">
+                  <td className="py-5 pr-4">
+                    <p className="font-bold text-foreground">{item.name}</p>
+                    {item.option && <p className="inline-block px-2 py-0.5 mt-1.5 rounded bg-primary/10 text-[11px] font-bold text-primary">+ {item.option}</p>}
                   </td>
-                  <td className="py-4 text-center font-medium text-stone-600">{item.quantity}</td>
-                  <td className="py-4 text-right font-medium text-stone-600">₹{item.unitPrice}</td>
-                  <td className="py-4 text-right font-bold text-stone-900">₹{item.lineTotal}</td>
+                  <td className="py-5 text-center font-bold text-foreground/70">{item.quantity}</td>
+                  <td className="py-5 text-right font-medium text-foreground/70">₹{item.unitPrice}</td>
+                  <td className="py-5 text-right font-extrabold text-foreground tracking-tight">₹{item.lineTotal}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <div className="flex justify-end pt-6 border-t border-stone-200">
-            <div className="w-full sm:w-1/2">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-stone-500">Total Items</span>
-                <span className="font-medium text-stone-900">{order.summary.totalItems}</span>
+          <div className="flex justify-end pt-8 border-t-2 border-border">
+            <div className="w-full sm:w-1/2 md:w-1/3">
+              <div className="flex justify-between text-base mb-4">
+                <span className="text-foreground/60 font-medium">Total Items</span>
+                <span className="font-bold text-foreground">{order.summary.totalItems}</span>
               </div>
-              <div className="flex justify-between text-lg font-extrabold mt-4 pt-4 border-t border-stone-200">
-                <span className="text-stone-900">Estimated Total</span>
-                <span className="text-stone-900">₹{order.summary.totalPrice}</span>
+              <div className="flex justify-between text-2xl font-extrabold mt-6 pt-6 border-t-2 border-border tracking-tight">
+                <span className="text-foreground">Estimate</span>
+                <span className="text-foreground">₹{order.summary.totalPrice}</span>
               </div>
             </div>
           </div>
           
           {order.customer.notes && (
-             <div className="mt-10 pt-6 border-t border-stone-100">
-               <h3 className="text-xs font-bold text-stone-400 uppercase tracking-wider mb-2">Special Instructions</h3>
-               <p className="text-sm text-stone-700 italic">{order.customer.notes}</p>
+             <div className="mt-12 pt-8 border-t border-border/50">
+               <h3 className="text-sm font-extrabold text-foreground/40 uppercase tracking-widest mb-3">Special Instructions</h3>
+               <p className="text-base text-foreground/80 font-medium italic bg-stone-50 p-5 rounded-xl border border-border">{order.customer.notes}</p>
              </div>
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4 print:hidden">
+        <div className="flex flex-col sm:flex-row gap-5 print:hidden">
           <button
             onClick={handlePrint}
-            className="flex-1 flex items-center justify-center rounded-full bg-white border border-stone-200 px-6 py-4 text-sm font-bold text-stone-900 shadow-sm hover:bg-stone-50 active:scale-95 transition-all"
+            className="flex-1 flex items-center justify-center rounded-full bg-card border-2 border-border px-8 py-5 text-base font-bold text-foreground shadow-sm hover:bg-stone-50 active:scale-95 transition-all hover:border-primary/30"
           >
-            <Printer className="w-4 h-4 mr-2" />
+            <Printer className="w-5 h-5 mr-3 text-foreground/50" />
             Download / Print Bill
           </button>
           <Link
             href="/bulk-order"
-            className="flex-1 flex items-center justify-center rounded-full bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-blue-700 active:scale-95 transition-all group"
+            className="flex-1 flex items-center justify-center rounded-full bg-primary px-8 py-5 text-base font-bold text-primary-foreground shadow-lg hover:bg-primary/90 active:scale-95 transition-all group"
           >
             Start New Bulk Order
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
 

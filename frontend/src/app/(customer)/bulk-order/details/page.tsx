@@ -23,18 +23,19 @@ export default function BulkDetailsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isHydrated) {
-    return <div className="min-h-screen bg-[#FCFBF8]"></div>;
+    return <div className="min-h-screen bg-background"></div>;
   }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#FCFBF8] flex flex-col items-center p-4 pt-20">
-        <div className="bg-white p-8 rounded-2xl border border-stone-200 shadow-sm text-center max-w-md w-full">
-          <h1 className="text-2xl font-extrabold text-stone-900 mb-2">Bulk Cart is empty</h1>
-          <p className="text-stone-500 mb-8">You need items in your bulk cart to proceed.</p>
+      <div className="min-h-screen bg-background flex flex-col items-center p-4 pt-24">
+        <div className="bg-card p-10 rounded-[2rem] border border-border shadow-xl text-center max-w-md w-full relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent pointer-events-none" />
+          <h1 className="relative text-3xl font-extrabold text-foreground mb-3 tracking-tight">Bulk Cart is empty</h1>
+          <p className="relative text-base text-foreground/60 mb-10 leading-relaxed">You need items in your bulk cart to proceed.</p>
           <Link
             href="/bulk-order"
-            className="flex items-center justify-center w-full rounded-full bg-blue-600 px-6 py-4 text-sm font-bold text-white shadow-sm hover:bg-blue-700 active:scale-95 transition-all"
+            className="relative flex items-center justify-center w-full rounded-full bg-primary px-8 py-5 text-base font-bold text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
           >
             Browse Bulk Menu
           </Link>
@@ -125,51 +126,53 @@ export default function BulkDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FCFBF8] py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <Link href="/bulk-order/cart" className="inline-flex items-center text-sm font-bold text-stone-500 hover:text-stone-900 mb-6 transition-colors">
-          <ArrowLeft className="w-4 h-4 mr-2" />
+        <Link href="/bulk-order/cart" className="inline-flex items-center text-sm font-bold text-foreground/50 hover:text-foreground mb-8 transition-colors group">
+          <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Bulk Cart
         </Link>
         
-        <h1 className="text-3xl font-extrabold text-stone-900 tracking-tight mb-8">Bulk Order Details</h1>
+        <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-10">Bulk Order Details</h1>
         
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
-          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start">
+          <div className="lg:col-span-7 xl:col-span-8 space-y-8">
             
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm">
-              <h2 className="text-xl font-bold text-stone-900 mb-6">Customer Information</h2>
+            <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-primary to-primary/50" />
+              <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Customer Information</h2>
               
-              <div className="flex bg-stone-100 rounded-lg p-1 mb-6">
+              <div className="flex bg-stone-100/50 rounded-xl p-1.5 mb-8 border border-border shadow-inner">
                 <button
                   type="button"
                   onClick={() => setMode("manual")}
-                  className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${mode === "manual" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
+                  className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all ${mode === "manual" ? "bg-white text-foreground shadow-sm ring-1 ring-border" : "text-foreground/50 hover:text-foreground/80"}`}
                 >
                   Enter Details
                 </button>
                 <button
                   type="button"
                   onClick={() => setMode("auto")}
-                  className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${mode === "auto" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-700"}`}
+                  className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all ${mode === "auto" ? "bg-white text-foreground shadow-sm ring-1 ring-border" : "text-foreground/50 hover:text-foreground/80"}`}
                 >
                   Use Saved Details
                 </button>
               </div>
 
               {mode === "auto" ? (
-                <div className="bg-blue-50 border border-blue-100 rounded-xl p-6 text-center">
-                  <UserCircle className="w-12 h-12 text-blue-300 mx-auto mb-3" />
-                  <h3 className="text-lg font-bold text-blue-900 mb-1">Backend Integration Point</h3>
-                  <p className="text-sm text-blue-700">
+                <div className="bg-primary/5 border border-primary/20 rounded-2xl p-8 text-center relative overflow-hidden">
+                  <div className="absolute inset-0 bg-linear-to-b from-primary/5 to-transparent pointer-events-none" />
+                  <UserCircle className="relative w-16 h-16 text-primary/40 mx-auto mb-4" />
+                  <h3 className="relative text-xl font-bold text-primary mb-2">Backend Integration Point</h3>
+                  <p className="relative text-sm text-primary/70 leading-relaxed max-w-md mx-auto">
                     Authentication is not yet connected. When the backend is ready, this will auto-fill using your authenticated profile.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-bold text-stone-700 mb-2">
-                      Full Name <span className="text-red-500">*</span>
+                    <label htmlFor="name" className="block text-sm font-bold text-foreground/70 mb-2">
+                      Full Name <span className="text-destructive">*</span>
                     </label>
                     <input
                       type="text"
@@ -177,14 +180,14 @@ export default function BulkDetailsPage() {
                       name="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className={`block w-full rounded-lg border bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-600 ${errors.name ? 'border-red-500' : 'border-stone-200'}`}
+                      className={`block w-full rounded-xl border-2 bg-background py-4 px-5 text-foreground font-medium placeholder:text-foreground/30 focus:outline-none transition-colors ${errors.name ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border focus:border-primary focus:ring-primary/20'}`}
                       placeholder="Organization or Contact Name"
                     />
-                    {errors.name && <p className="mt-2 text-sm text-red-600 font-medium">{errors.name}</p>}
+                    {errors.name && <p className="mt-2 text-sm text-destructive font-bold flex items-center"><span className="w-1 h-1 rounded-full bg-destructive mr-2 inline-block"></span>{errors.name}</p>}
                   </div>
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-bold text-stone-700 mb-2">
-                      Phone Number <span className="text-red-500">*</span>
+                    <label htmlFor="phone" className="block text-sm font-bold text-foreground/70 mb-2">
+                      Phone Number <span className="text-destructive">*</span>
                     </label>
                     <input
                       type="tel"
@@ -192,21 +195,22 @@ export default function BulkDetailsPage() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className={`block w-full rounded-lg border bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-600 ${errors.phone ? 'border-red-500' : 'border-stone-200'}`}
+                      className={`block w-full rounded-xl border-2 bg-background py-4 px-5 text-foreground font-medium placeholder:text-foreground/30 focus:outline-none transition-colors ${errors.phone ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border focus:border-primary focus:ring-primary/20'}`}
                       placeholder="10-digit mobile number"
                     />
-                    {errors.phone && <p className="mt-2 text-sm text-red-600 font-medium">{errors.phone}</p>}
+                    {errors.phone && <p className="mt-2 text-sm text-destructive font-bold flex items-center"><span className="w-1 h-1 rounded-full bg-destructive mr-2 inline-block"></span>{errors.phone}</p>}
                   </div>
                 </div>
               )}
             </div>
 
-            <form id="bulk-checkout-form" onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm space-y-6">
-              <h2 className="text-xl font-bold text-stone-900 mb-2">Delivery Details</h2>
+            <form id="bulk-checkout-form" onSubmit={handleSubmit} className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm space-y-8 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-primary to-primary/50" />
+              <h2 className="text-2xl font-extrabold text-foreground tracking-tight">Delivery Details</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="date" className="block text-sm font-bold text-stone-700 mb-2">
-                    Date <span className="text-red-500">*</span>
+                  <label htmlFor="date" className="block text-sm font-bold text-foreground/70 mb-2">
+                    Date <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="date"
@@ -214,13 +218,13 @@ export default function BulkDetailsPage() {
                     name="date"
                     value={formData.date}
                     onChange={handleChange}
-                    className={`block w-full rounded-lg border bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-600 ${errors.date ? 'border-red-500' : 'border-stone-200'}`}
+                    className={`block w-full rounded-xl border-2 bg-background py-4 px-5 text-foreground font-medium focus:outline-none transition-colors ${errors.date ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border focus:border-primary focus:ring-primary/20'}`}
                   />
-                  {errors.date && <p className="mt-2 text-sm text-red-600 font-medium">{errors.date}</p>}
+                  {errors.date && <p className="mt-2 text-sm text-destructive font-bold flex items-center"><span className="w-1 h-1 rounded-full bg-destructive mr-2 inline-block"></span>{errors.date}</p>}
                 </div>
                 <div>
-                  <label htmlFor="time" className="block text-sm font-bold text-stone-700 mb-2">
-                    Time <span className="text-red-500">*</span>
+                  <label htmlFor="time" className="block text-sm font-bold text-foreground/70 mb-2">
+                    Time <span className="text-destructive">*</span>
                   </label>
                   <input
                     type="time"
@@ -228,22 +232,22 @@ export default function BulkDetailsPage() {
                     name="time"
                     value={formData.time}
                     onChange={handleChange}
-                    className={`block w-full rounded-lg border bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-600 ${errors.time ? 'border-red-500' : 'border-stone-200'}`}
+                    className={`block w-full rounded-xl border-2 bg-background py-4 px-5 text-foreground font-medium focus:outline-none transition-colors ${errors.time ? 'border-destructive focus:border-destructive focus:ring-destructive/20' : 'border-border focus:border-primary focus:ring-primary/20'}`}
                   />
-                  {errors.time && <p className="mt-2 text-sm text-red-600 font-medium">{errors.time}</p>}
+                  {errors.time && <p className="mt-2 text-sm text-destructive font-bold flex items-center"><span className="w-1 h-1 rounded-full bg-destructive mr-2 inline-block"></span>{errors.time}</p>}
                 </div>
               </div>
               <div>
-                <label htmlFor="notes" className="block text-sm font-bold text-stone-700 mb-2">
-                  Special Instructions (Optional)
+                <label htmlFor="notes" className="block text-sm font-bold text-foreground/70 mb-2">
+                  Special Instructions <span className="text-foreground/40 font-medium">(Optional)</span>
                 </label>
                 <textarea
                   id="notes"
                   name="notes"
-                  rows={3}
+                  rows={4}
                   value={formData.notes}
                   onChange={handleChange}
-                  className="block w-full rounded-lg border border-stone-200 bg-stone-50 py-3 px-4 text-stone-900 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="block w-full rounded-xl border-2 border-border bg-background py-4 px-5 text-foreground font-medium placeholder:text-foreground/30 focus:outline-none focus:border-primary transition-colors resize-none"
                   placeholder="e.g. Packing requirements, dietary notes"
                 />
               </div>
@@ -251,24 +255,25 @@ export default function BulkDetailsPage() {
 
           </div>
 
-          <div className="mt-8 lg:mt-0 lg:col-span-5 xl:col-span-4">
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-stone-200 shadow-sm sticky top-24">
-              <h2 className="text-xl font-bold text-stone-900 mb-6">Bulk Order Summary</h2>
+          <div className="mt-10 lg:mt-0 lg:col-span-5 xl:col-span-4">
+            <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-xl sticky top-32 overflow-hidden">
+              <div className="absolute inset-0 bg-linear-to-b from-stone-50/50 to-transparent pointer-events-none" />
+              <h2 className="relative text-2xl font-extrabold text-foreground mb-8 tracking-tight">Bulk Order Summary</h2>
               
-              <div className="flow-root mb-6 max-h-[40vh] overflow-y-auto pr-2">
-                <ul className="divide-y divide-stone-100">
+              <div className="relative flow-root mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                <ul className="divide-y divide-border/50">
                   {items.map((item) => (
-                    <li key={item.cartItemId} className="py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                    <li key={item.cartItemId} className="py-5 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                       <div className="flex-1">
-                        <h4 className="text-sm font-bold text-stone-900">{item.product.name}</h4>
+                        <h4 className="text-base font-bold text-foreground">{item.product.name}</h4>
                         {item.option && (
-                          <p className="text-xs font-semibold text-blue-700 mt-0.5">
+                          <span className="inline-block px-2 py-0.5 mt-2 rounded bg-primary/10 text-[11px] font-bold text-primary">
                             + {item.option.name}
-                          </p>
+                          </span>
                         )}
-                        <p className="text-xs text-stone-500 mt-1">Qty: {item.quantity} × ₹{item.unitPrice}</p>
+                        <p className="text-sm font-medium text-foreground/50 mt-2">Qty: {item.quantity} × ₹{item.unitPrice}</p>
                       </div>
-                      <div className="text-sm font-extrabold text-stone-900 sm:text-right">
+                      <div className="text-base font-extrabold text-foreground sm:text-right tracking-tight">
                         ₹{item.unitPrice * item.quantity}
                       </div>
                     </li>
@@ -276,14 +281,14 @@ export default function BulkDetailsPage() {
                 </ul>
               </div>
               
-              <dl className="space-y-4 text-sm text-stone-600 mb-6 pt-4 border-t border-stone-100">
-                <div className="flex justify-between pb-4 border-b border-stone-100">
-                  <dt>Items ({totalItems})</dt>
-                  <dd className="font-medium text-stone-900">₹{totalPrice}</dd>
+              <dl className="relative space-y-5 text-base text-foreground/70 mb-10 pt-6 border-t-2 border-border">
+                <div className="flex justify-between pb-5 border-b border-border">
+                  <dt className="font-medium">Items ({totalItems})</dt>
+                  <dd className="font-bold text-foreground">₹{totalPrice}</dd>
                 </div>
                 <div className="flex justify-between pt-2">
-                  <dt className="text-base font-bold text-stone-900">Estimated Total</dt>
-                  <dd className="text-lg font-extrabold text-stone-900">₹{totalPrice}</dd>
+                  <dt className="text-xl font-bold text-foreground">Estimated Total</dt>
+                  <dd className="text-2xl font-extrabold text-foreground tracking-tight">₹{totalPrice}</dd>
                 </div>
               </dl>
 
@@ -291,9 +296,10 @@ export default function BulkDetailsPage() {
                 type="submit"
                 form="bulk-checkout-form"
                 disabled={isSubmitting || mode === "auto"}
-                className="w-full flex items-center justify-center rounded-full bg-blue-600 px-6 py-4 text-base font-bold text-white shadow-sm transition-all hover:bg-blue-700 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="relative w-full flex items-center justify-center rounded-full bg-primary px-8 py-5 text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90 hover:scale-[1.02] active:scale-95 disabled:opacity-70 disabled:hover:scale-100 disabled:cursor-not-allowed group overflow-hidden"
               >
-                {mode === "auto" ? "Authentication Required" : isSubmitting ? "Processing..." : "Confirm Details"}
+                {isSubmitting && <div className="absolute inset-0 bg-white/20 animate-pulse" />}
+                <span className="relative">{mode === "auto" ? "Authentication Required" : isSubmitting ? "Processing..." : "Confirm Details"}</span>
               </button>
             </div>
           </div>
