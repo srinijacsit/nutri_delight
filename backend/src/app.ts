@@ -1,6 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { env } from './config/env';
+import catalogRoutes from './routes/catalog.routes';
+import profileRoutes from './routes/profile.routes';
+import addressRoutes from './routes/address.routes';
+import cartRoutes from './routes/cart.routes';
+import { errorHandler } from './middleware/error.middleware';
 
 const app = express();
 
@@ -20,6 +25,11 @@ app.get('/api/health', (req: Request, res: Response) => {
   });
 });
 
+app.use('/api', catalogRoutes); // Handles /categories, /products, etc.
+app.use('/api/profile', profileRoutes);
+app.use('/api/addresses', addressRoutes);
+app.use('/api/cart', cartRoutes);
+
 // 404 Handler
 app.use((req: Request, res: Response) => {
   res.status(404).json({
@@ -29,12 +39,6 @@ app.use((req: Request, res: Response) => {
 });
 
 // Global Error Handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    message: 'Internal Server Error'
-  });
-});
+app.use(errorHandler);
 
 export default app;
