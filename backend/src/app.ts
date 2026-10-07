@@ -5,6 +5,8 @@ import catalogRoutes from './routes/catalog.routes';
 import profileRoutes from './routes/profile.routes';
 import addressRoutes from './routes/address.routes';
 import cartRoutes from './routes/cart.routes';
+import orderRoutes from './routes/order.routes';
+import notificationRoutes from './routes/notification.routes';
 import { errorHandler } from './middleware/error.middleware';
 
 const app = express();
@@ -29,6 +31,8 @@ app.use('/api', catalogRoutes); // Handles /categories, /products, etc.
 app.use('/api/profile', profileRoutes);
 app.use('/api/addresses', addressRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // 404 Handler
 app.use((req: Request, res: Response) => {
