@@ -1,12 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import { env } from './config/env';
 
 const app = express();
 
 // Middleware
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: env.FRONTEND_URL,
   })
 );
 app.use(express.json());
