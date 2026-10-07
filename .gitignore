@@ -43,3 +43,6 @@ next-env.d.ts
 # AI instructions
 AGENTS.md
 CLAUDE.md
+
+# backend
+backend/dist/
