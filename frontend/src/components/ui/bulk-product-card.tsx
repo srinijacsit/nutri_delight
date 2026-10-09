@@ -4,7 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/types";
 import { useBulkCart } from "@/contexts/bulk-cart-context";
-import { CartOption } from "@/contexts/cart-context";
+
+interface CartOption {
+  name: string;
+  price: number;
+}
 import { getProductImage } from "@/lib/image-mapping";
 
 interface BulkProductCardProps {
@@ -20,7 +24,7 @@ export function BulkProductCard({ product }: BulkProductCardProps) {
       { name: "Regular", price: 0 },
       { name: "Parcel", price: 10 }
     ];
-  } else if (product.id === "chicken-roll") {
+  } else if (product.slug === "chicken-roll") {
     availableOptions = [
       { name: "None", price: 0 },
       { name: "Omelette", price: 10 },
@@ -41,7 +45,7 @@ export function BulkProductCard({ product }: BulkProductCardProps) {
   const quantityInCart = cartItem?.quantity || 0;
 
   const displayPrice = product.price + (selectedOption?.price || 0);
-  const imageSrc = getProductImage(product.id);
+  const imageSrc = getProductImage(product.slug);
 
   const handleAdd = () => {
     const qty = parseInt(inputQuantity, 10);

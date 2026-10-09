@@ -1,15 +1,48 @@
-import { menu } from "@/lib/data/menu";
 import { MenuClient } from "@/components/menu/menu-client";
 import { Metadata } from "next";
+import { Product, Category } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Menu | Nutri Delight",
   description: "Browse our fresh and healthy menu. Order food and juices in Bhimavaram.",
 };
 
-export default function MenuPage() {
-  // Deduplicate categories from real menu data safely
-  const categories = Array.from(new Set(menu.map((item) => item.category)));
+export const revalidate = 0; // Prevent static rendering
+
+export default async function MenuPage() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+  let categoriesData: Category[] = [];
+  let productsData: Product[] = [];
+
+  try {
+    const [catRes, prodRes] = await Promise.all([
+      fetch(`${apiUrl}/categories`, { cache: 'no-store' }),
+      fetch(`${apiUrl}/products`, { cache: 'no-store' })
+    ]);
+
+    if (catRes.ok) {
+      const json = await catRes.json();
+      categoriesData = json.data || [];
+    }
+    if (prodRes.ok) {
+      const json = await prodRes.json();
+      productsData = json.data || [];
+    }
+  } catch (err) {
+    console.error("Failed to fetch catalog:", err);
+  }
+
+  // Deduplicate categories
+  const categories = categoriesData.map((c) => c.name);
+
+  // Map product options and category
+  const mappedProducts = productsData.map((p) => {
+    return {
+      ...p,
+      category: p.category || '',
+    };
+  });
 
   return (
     <div className="w-full flex flex-col min-h-screen bg-background">
@@ -21,7 +54,7 @@ export default function MenuPage() {
         </p>
       </div>
       <div className="flex-1 w-full bg-background">
-        <MenuClient products={menu} categories={categories} />
+        <MenuClient products={mappedProducts} categories={categories} />
       </div>
     </div>
   );

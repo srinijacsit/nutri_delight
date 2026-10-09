@@ -9,13 +9,13 @@ import { ArrowLeft, ShoppingBag } from "lucide-react";
 export default function CheckoutPage() {
   const { items, totalItems, totalPrice, isHydrated, clearCart } = useCart();
   const router = useRouter();
-  
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     notes: ""
   });
-  
+
   const [errors, setErrors] = useState({
     name: "",
     phone: ""
@@ -57,7 +57,7 @@ export default function CheckoutPage() {
       newErrors.name = "Name is required";
       isValid = false;
     }
-    
+
     const phoneRegex = /^[0-9]{10}$/;
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
@@ -71,47 +71,35 @@ export default function CheckoutPage() {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
       setIsSubmitting(true);
-      
-      // Mock order preparation logic
-      const orderPayload = {
-        date: new Date().toISOString(),
-        customer: {
-          name: formData.name,
-          phone: formData.phone,
-          notes: formData.notes
-        },
-        items: items.map(item => ({
-          productId: item.product.id,
-          name: item.product.name,
-          option: item.option ? item.option.name : null,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          lineTotal: item.unitPrice * item.quantity
-        })),
-        summary: {
-          totalItems,
-          totalPrice
-        }
-      };
-      
-      console.log("Mock Order Payload:", orderPayload);
-      
-      // Simulate network request
-      setTimeout(() => {
-        // Temporary frontend order history persistence
-        const historyStr = localStorage.getItem("nutridelight-order-history");
-        const history = historyStr ? JSON.parse(historyStr) : [];
-        history.unshift(orderPayload);
-        localStorage.setItem("nutridelight-order-history", JSON.stringify(history));
 
-        sessionStorage.setItem("nutridelight-last-order", JSON.stringify(orderPayload));
+      try {
+        const orderData = {
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          customer_notes: formData.notes,
+        };
+
+        const { apiClient } = await import('@/lib/api/client');
+        const order = await apiClient.post('/orders/normal', orderData);
+
+        // Temporarily store just the order ID or full order for confirmation page
+        sessionStorage.setItem("nutridelight-last-order", JSON.stringify(order));
         clearCart();
         router.push("/confirmation");
-      }, 1000);
+      } catch (err: unknown) {
+        console.error("Order submission failed", err);
+        if (typeof err === 'object' && err !== null && 'status' in err && (err as {status?: number}).status === 401) {
+          router.push('/login');
+        } else {
+          alert(`Order failed: ${typeof err === 'object' && err !== null && 'message' in err ? (err as {message?: string}).message : 'Unknown error'}`);
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -131,16 +119,16 @@ export default function CheckoutPage() {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Cart
         </Link>
-        
+
         <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-10">Checkout</h1>
-        
+
         <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start">
-          
+
           {/* Customer Details Form */}
           <div className="lg:col-span-7 xl:col-span-8">
             <form id="checkout-form" onSubmit={handleSubmit} className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm">
               <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Contact Information</h2>
-              
+
               <div className="space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-bold text-foreground/80 mb-2">
@@ -197,7 +185,7 @@ export default function CheckoutPage() {
             <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-xl sticky top-32 overflow-hidden">
               <div className="absolute inset-0 bg-linear-to-b from-stone-50/50 to-transparent pointer-events-none" />
               <h2 className="relative text-2xl font-extrabold text-foreground mb-8 tracking-tight">Order Review</h2>
-              
+
               <div className="relative flow-root mb-8 max-h-[40vh] overflow-y-auto pr-2" style={{ scrollbarWidth: "thin" }}>
                 <ul className="divide-y divide-border">
                   {items.map((item) => (
@@ -218,7 +206,7 @@ export default function CheckoutPage() {
                   ))}
                 </ul>
               </div>
-              
+
               <dl className="relative space-y-5 text-base text-foreground/70 mb-8 pt-6 border-t border-border">
                 <div className="flex justify-between pb-5 border-b border-border">
                   <dt className="font-medium">Items ({totalItems})</dt>
@@ -240,7 +228,7 @@ export default function CheckoutPage() {
               </button>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>

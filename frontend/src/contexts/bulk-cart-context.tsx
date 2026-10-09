@@ -1,14 +1,13 @@
 "use client";
 
 import { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
-import { Product } from "@/lib/types";
-import { CartOption } from "@/contexts/cart-context";
+import { Product, ProductOption } from "@/lib/types";
 
 export interface BulkCartItem {
   cartItemId: string;
   product: Product;
   quantity: number;
-  option?: CartOption;
+  option?: ProductOption;
   unitPrice: number;
 }
 
@@ -18,7 +17,7 @@ interface BulkCartState {
 }
 
 type BulkCartAction =
-  | { type: "ADD_ITEM"; product: Product; quantity: number; option?: CartOption }
+  | { type: "ADD_ITEM"; product: Product; quantity: number; option?: ProductOption }
   | { type: "SET_QUANTITY"; cartItemId: string; quantity: number }
   | { type: "INCREMENT_ITEM"; cartItemId: string }
   | { type: "DECREMENT_ITEM"; cartItemId: string }
@@ -27,7 +26,7 @@ type BulkCartAction =
   | { type: "HYDRATE_CART"; items: BulkCartItem[] };
 
 interface BulkCartContextType extends BulkCartState {
-  addToCart: (product: Product, quantity: number, option?: CartOption) => void;
+  addToCart: (product: Product, quantity: number, option?: ProductOption) => void;
   setQuantity: (cartItemId: string, quantity: number) => void;
   incrementItem: (cartItemId: string) => void;
   decrementItem: (cartItemId: string) => void;
@@ -134,7 +133,10 @@ export function BulkCartProvider({ children }: { children: ReactNode }) {
     <BulkCartContext.Provider
       value={{
         ...state,
-        addToCart: (product, quantity, option) => dispatch({ type: "ADD_ITEM", product, quantity, option }),
+        addToCart: (product, quantity, option) => {
+          const realOption = product.options?.find(o => o.name === option?.name || o.name === `With ${option?.name}`);
+          dispatch({ type: "ADD_ITEM", product, quantity, option: realOption || option });
+        },
         setQuantity: (id, quantity) => dispatch({ type: "SET_QUANTITY", cartItemId: id, quantity }),
         incrementItem: (id) => dispatch({ type: "INCREMENT_ITEM", cartItemId: id }),
         decrementItem: (id) => dispatch({ type: "DECREMENT_ITEM", cartItemId: id }),

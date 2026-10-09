@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/types";
-import { useCart, CartOption } from "@/contexts/cart-context";
+import { useCart } from "@/contexts/cart-context";
+
+interface CartOption {
+  name: string;
+  price: number;
+}
 import { getProductImage } from "@/lib/image-mapping";
 
 interface ProductCardProps {
@@ -20,7 +25,7 @@ export function ProductCard({ product }: ProductCardProps) {
       { name: "Regular", price: 0 },
       { name: "Parcel", price: 10 }
     ];
-  } else if (product.id === "chicken-roll") {
+  } else if (product.slug === "chicken-roll") {
     availableOptions = [
       { name: "None", price: 0 },
       { name: "Omelette", price: 10 },
@@ -41,7 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const quantity = cartItem?.quantity || 0;
 
   const displayPrice = product.price + (selectedOption?.price || 0);
-  const imageSrc = getProductImage(product.id);
+  const imageSrc = getProductImage(product.slug);
 
   return (
     <div className="flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-card shadow-sm transition-all hover:shadow-lg hover:border-primary/20 group">

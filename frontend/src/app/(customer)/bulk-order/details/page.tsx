@@ -18,7 +18,7 @@ export default function BulkDetailsPage() {
     time: "",
     notes: ""
   });
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -80,40 +80,42 @@ export default function BulkDetailsPage() {
     return isValid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
       setIsSubmitting(true);
-      
-      const payloadCustomer = { name: formData.name, phone: formData.phone, notes: formData.notes };
 
-      const orderPayload = {
-        type: "BULK_ORDER",
-        date: new Date().toISOString(),
-        delivery: {
-          date: formData.date,
-          time: formData.time,
-        },
-        customer: payloadCustomer,
-        items: items.map(item => ({
-          productId: item.product.id,
-          name: item.product.name,
-          option: item.option ? item.option.name : null,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          lineTotal: item.unitPrice * item.quantity
-        })),
-        summary: {
-          totalItems,
-          totalPrice
-        }
-      };
+      try {
+        const orderData = {
+          customer_name: formData.name,
+          customer_phone: formData.phone,
+          customer_notes: formData.notes,
+          event_date: formData.date,
+          event_time: formData.time,
+          items: items.map(item => ({
+            product_id: item.product.id,
+            option_id: item.option?.id,
+            option_name: item.option?.name,
+            quantity: item.quantity
+          }))
+        };
 
-      setTimeout(() => {
-        sessionStorage.setItem("nutridelight-bulk-last-order", JSON.stringify(orderPayload));
+        const { apiClient } = await import('@/lib/api/client');
+        const order = await apiClient.post('/orders/bulk', orderData);
+
+        sessionStorage.setItem("nutridelight-bulk-last-order", JSON.stringify(order));
         clearCart();
         router.push("/bulk-order/success");
-      }, 1000);
+      } catch (err: unknown) {
+        console.error("Bulk order submission failed", err);
+        if (typeof err === 'object' && err !== null && 'status' in err && (err as {status?: number}).status === 401) {
+          router.push('/login');
+        } else {
+          alert(`Bulk order failed: ${typeof err === 'object' && err !== null && 'message' in err ? (err as {message?: string}).message : 'Unknown error'}`);
+        }
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -132,16 +134,16 @@ export default function BulkDetailsPage() {
           <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
           Back to Bulk Cart
         </Link>
-        
+
         <h1 className="text-4xl font-extrabold text-foreground tracking-tight mb-10">Bulk Order Details</h1>
-        
+
         <div className="lg:grid lg:grid-cols-12 lg:gap-10 lg:items-start">
           <div className="lg:col-span-7 xl:col-span-8 space-y-8">
-            
+
             <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-primary to-primary/50" />
               <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Customer Information</h2>
-              
+
               <div className="flex bg-stone-100/50 rounded-xl p-1.5 mb-8 border border-border shadow-inner">
                 <button
                   type="button"
@@ -259,7 +261,7 @@ export default function BulkDetailsPage() {
             <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-xl sticky top-32 overflow-hidden">
               <div className="absolute inset-0 bg-linear-to-b from-stone-50/50 to-transparent pointer-events-none" />
               <h2 className="relative text-2xl font-extrabold text-foreground mb-8 tracking-tight">Bulk Order Summary</h2>
-              
+
               <div className="relative flow-root mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                 <ul className="divide-y divide-border/50">
                   {items.map((item) => (
@@ -280,7 +282,7 @@ export default function BulkDetailsPage() {
                   ))}
                 </ul>
               </div>
-              
+
               <dl className="relative space-y-5 text-base text-foreground/70 mb-10 pt-6 border-t-2 border-border">
                 <div className="flex justify-between pb-5 border-b border-border">
                   <dt className="font-medium">Items ({totalItems})</dt>
@@ -303,7 +305,7 @@ export default function BulkDetailsPage() {
               </button>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>

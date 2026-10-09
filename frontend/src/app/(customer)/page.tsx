@@ -1,22 +1,40 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import { menu } from "@/lib/data/menu";
 import { ProductCard } from "@/components/ui/product-card";
 import { getCategoryImage } from "@/lib/image-mapping";
+import { Product, Category } from "@/lib/types";
 
-// 1. Derive categories dynamically
-const categories = Array.from(new Set(menu.map((item) => item.category)));
+export const revalidate = 0; // Prevent static rendering with mock data
 
-// 2. Curate real products dynamically
-const curatedProducts = [
-  menu.find((p) => p.id === "watermelon"),
-  menu.find((p) => p.id === "chicken-roll"),
-  menu.find((p) => p.id === "multi-millet-dosa"),
-  menu.find((p) => p.id === "badam-milk"),
-].filter(Boolean) as typeof menu;
+export default async function CustomerHome() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-export default function CustomerHome() {
+  let categoriesData: Category[] = [];
+  let productsData: Product[] = [];
+
+  try {
+    const [catRes, prodRes] = await Promise.all([
+      fetch(`${apiUrl}/categories`, { cache: 'no-store' }),
+      fetch(`${apiUrl}/products`, { cache: 'no-store' })
+    ]);
+
+    if (catRes.ok) {
+      const json = await catRes.json();
+      categoriesData = json.data || [];
+    }
+    if (prodRes.ok) {
+      const json = await prodRes.json();
+      productsData = json.data || [];
+    }
+  } catch (err) {
+    console.error("Failed to fetch catalog:", err);
+  }
+
+  // Derive curated products
+  const curatedSlugs = ["watermelon", "chicken-roll", "multi-millet-dosa", "badam-milk"];
+  const curatedProducts = productsData.filter((p) => curatedSlugs.includes(p.slug || ''));
+
   return (
     <div className="flex flex-col w-full bg-background">
       {/* 1. Hero Section */}
@@ -57,26 +75,26 @@ export default function CustomerHome() {
             Explore Categories
           </h2>
           <div className="flex overflow-x-auto pb-8 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 gap-6" style={{ scrollbarWidth: "none" }}>
-            {categories.map((category) => {
-              const count = menu.filter(p => p.category === category).length;
-              const imageSrc = getCategoryImage(category);
+            {categoriesData.map((category) => {
+              const count = productsData.filter((p) => p.category_id === category.id).length;
+              const imageSrc = getCategoryImage(category.name);
               return (
                 <Link
-                  key={category}
+                  key={category.id}
                   href="/menu"
                   className="group relative flex w-40 shrink-0 snap-start flex-col items-center overflow-hidden rounded-3xl border border-border bg-background shadow-sm transition-all hover:border-primary/30 hover:shadow-xl sm:w-45"
                 >
                   <div className="relative w-full aspect-4/3 bg-muted overflow-hidden">
-                    <Image 
+                    <Image
                       src={imageSrc}
-                      alt={category}
+                      alt={category.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-black/20 transition-opacity group-hover:bg-black/10" />
                   </div>
                   <div className="flex flex-col items-center justify-center p-5 w-full bg-card z-10 -mt-2 rounded-t-3xl transition-transform group-hover:-translate-y-2">
-                    <h3 className="text-center text-sm sm:text-base font-bold text-foreground leading-tight mb-1.5">{category}</h3>
+                    <h3 className="text-center text-sm sm:text-base font-bold text-foreground leading-tight mb-1.5">{category.name}</h3>
                     <p className="text-[11px] font-bold text-foreground/50 uppercase tracking-wider">{count} items</p>
                   </div>
                 </Link>
@@ -98,9 +116,15 @@ export default function CustomerHome() {
             </Link>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {curatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {curatedProducts.map((product) => {
+              // Convert product back to the UI expected format temporarily if needed,
+              // but we will update types as well. UI expects `category` as string in some places,
+              // let's pass category.name.
+              const cat = categoriesData.find((c) => c.id === product.category_id);
+              return (
+                <ProductCard key={product.id} product={{...product, category: cat?.name || ''}} />
+              );
+            })}
           </div>
           <div className="mt-12 flex justify-center sm:hidden">
             <Link
@@ -119,7 +143,7 @@ export default function CustomerHome() {
           <div className="relative overflow-hidden rounded-[3rem] bg-stone-900 px-8 py-16 shadow-2xl sm:px-16 sm:py-20 md:px-20 lg:flex lg:items-center lg:justify-between lg:px-24 lg:py-24">
             {/* Background Decoration */}
             <div className="absolute inset-0 bg-linear-to-br from-stone-800 to-stone-950" />
-            
+
             <div className="relative max-w-2xl text-center lg:text-left z-10">
               <span className="inline-block rounded-full bg-white/10 px-4 py-1.5 text-sm font-bold text-white mb-6 backdrop-blur-md">
                 For Events & Parties

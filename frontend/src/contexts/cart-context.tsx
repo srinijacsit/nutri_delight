@@ -1,18 +1,16 @@
 "use client";
 
-import { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
-import { Product } from "@/lib/types";
-
-export interface CartOption {
-  name: string;
-  price: number;
-}
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { Product, ProductOption } from "@/lib/types";
+import { apiClient } from "@/lib/api/client";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export interface CartItem {
-  cartItemId: string;
+  cartItemId: string; // Backend UUID of the cart item
   product: Product;
   quantity: number;
-  option?: CartOption;
+  option?: ProductOption;
   unitPrice: number;
 }
 
@@ -21,131 +19,161 @@ interface CartState {
   isHydrated: boolean;
 }
 
-type CartAction =
-  | { type: "ADD_ITEM"; product: Product; option?: CartOption }
-  | { type: "INCREMENT_ITEM"; cartItemId: string }
-  | { type: "DECREMENT_ITEM"; cartItemId: string }
-  | { type: "REMOVE_ITEM"; cartItemId: string }
-  | { type: "CLEAR_CART" }
-  | { type: "HYDRATE_CART"; items: CartItem[] };
-
 interface CartContextType extends CartState {
-  addToCart: (product: Product, option?: CartOption) => void;
-  incrementItem: (cartItemId: string) => void;
-  decrementItem: (cartItemId: string) => void;
-  removeItem: (cartItemId: string) => void;
-  clearCart: () => void;
+  addToCart: (product: Product, option?: ProductOption) => Promise<void>;
+  incrementItem: (cartItemId: string) => Promise<void>;
+  decrementItem: (cartItemId: string) => Promise<void>;
+  removeItem: (cartItemId: string) => Promise<void>;
+  clearCart: () => Promise<void>;
   totalItems: number;
   totalPrice: number;
+  refreshCart: () => Promise<void>;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-function cartReducer(state: CartState, action: CartAction): CartState {
-  switch (action.type) {
-    case "ADD_ITEM": {
-      const optionSuffix = action.option ? `-${action.option.name}` : "";
-      const cartItemId = `${action.product.id}${optionSuffix}`;
-      const unitPrice = action.product.price + (action.option?.price || 0);
-
-      const existingItemIndex = state.items.findIndex(i => i.cartItemId === cartItemId);
-      if (existingItemIndex >= 0) {
-        const newItems = [...state.items];
-        newItems[existingItemIndex].quantity += 1;
-        return { ...state, items: newItems };
-      }
-      return { 
-        ...state, 
-        items: [...state.items, { cartItemId, product: action.product, quantity: 1, option: action.option, unitPrice }] 
-      };
-    }
-    case "INCREMENT_ITEM": {
-      return {
-        ...state,
-        items: state.items.map(item => 
-          item.cartItemId === action.cartItemId 
-            ? { ...item, quantity: item.quantity + 1 } 
-            : item
-        )
-      };
-    }
-    case "DECREMENT_ITEM": {
-      return {
-        ...state,
-        items: state.items.map(item => 
-          item.cartItemId === action.cartItemId 
-            ? { ...item, quantity: Math.max(0, item.quantity - 1) } 
-            : item
-        ).filter(item => item.quantity > 0)
-      };
-    }
-    case "REMOVE_ITEM": {
-      return {
-        ...state,
-        items: state.items.filter(i => i.cartItemId !== action.cartItemId)
-      };
-    }
-    case "CLEAR_CART":
-      return { ...state, items: [] };
-    case "HYDRATE_CART":
-      // Map old items to new structure if necessary
-      const hydratedItems = action.items.map(item => {
-        if (!item.cartItemId) {
-          return {
-            ...item,
-            cartItemId: item.product.id,
-            unitPrice: item.product.price,
-          };
-        }
-        return item;
-      });
-      return { ...state, items: hydratedItems, isHydrated: true };
-    default:
-      return state;
-  }
-}
-
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(cartReducer, { items: [], isHydrated: false });
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
+  const router = useRouter();
 
-  // Load from localStorage on mount (client-side only)
-  useEffect(() => {
+  const refreshCart = useCallback(async () => {
     try {
-      const stored = localStorage.getItem("nutridelight-cart");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          dispatch({ type: "HYDRATE_CART", items: parsed });
-          return;
-        }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setItems([]);
+        setIsHydrated(true);
+        return;
       }
-    } catch (e) {
-      console.error("Failed to parse cart", e);
+
+      const cartData = await apiClient.get("/cart") as { items: Array<{ id: string; quantity: number; unitPrice: number; product: Product; option?: ProductOption | null }> };
+      if (cartData && cartData.items) {
+        const mappedItems: CartItem[] = cartData.items.map((item) => {
+          return {
+            cartItemId: item.id,
+            product: item.product,
+            quantity: item.quantity,
+            option: item.option || undefined,
+            unitPrice: item.unitPrice
+          };
+        });
+        setItems(mappedItems);
+      } else {
+        setItems([]);
+      }
+    } catch (e: unknown) {
+      console.error("Failed to fetch cart", e);
+      if (typeof e === 'object' && e !== null && 'status' in e && (e as {status?: number}).status === 401) {
+        setItems([]);
+      }
+    } finally {
+      setIsHydrated(true);
     }
-    dispatch({ type: "HYDRATE_CART", items: [] });
   }, []);
 
-  // Sync to localStorage
   useEffect(() => {
-    if (state.isHydrated) {
-      localStorage.setItem("nutridelight-cart", JSON.stringify(state.items));
-    }
-  }, [state.items, state.isHydrated]);
+    let mounted = true;
 
-  const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = state.items.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+    async function load() {
+      if (mounted) await refreshCart();
+    }
+    void load();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      if (mounted) {
+        setTimeout(() => { void refreshCart(); }, 0);
+      }
+    });
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
+  }, [refreshCart]);
+
+  const handleUnauthorized = (e: unknown) => {
+    if (typeof e === 'object' && e !== null && 'status' in e && (e as {status?: number}).status === 401) {
+      router.push('/login');
+    }
+  };
+
+  const addToCart = async (product: Product, option?: ProductOption) => {
+    try {
+      const realOption = product.options?.find(o => o.name === option?.name || o.name === `With ${option?.name}`);
+      await apiClient.post("/cart/items", {
+        product_id: product.id,
+        option_id: realOption?.id || option?.id,
+        quantity: 1
+      });
+      await refreshCart();
+    } catch (e: unknown) {
+      handleUnauthorized(e);
+    }
+  };
+
+  const incrementItem = async (cartItemId: string) => {
+    const item = items.find(i => i.cartItemId === cartItemId);
+    if (!item) return;
+    try {
+      await apiClient.patch(`/cart/items/${cartItemId}`, {
+        quantity: item.quantity + 1
+      });
+      await refreshCart();
+    } catch (e: unknown) {
+      handleUnauthorized(e);
+    }
+  };
+
+  const decrementItem = async (cartItemId: string) => {
+    const item = items.find(i => i.cartItemId === cartItemId);
+    if (!item) return;
+    if (item.quantity === 1) {
+      return removeItem(cartItemId);
+    }
+    try {
+      await apiClient.patch(`/cart/items/${cartItemId}`, {
+        quantity: item.quantity - 1
+      });
+      await refreshCart();
+    } catch (e: unknown) {
+      handleUnauthorized(e);
+    }
+  };
+
+  const removeItem = async (cartItemId: string) => {
+    try {
+      await apiClient.delete(`/cart/items/${cartItemId}`);
+      await refreshCart();
+    } catch (e: unknown) {
+      handleUnauthorized(e);
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      await apiClient.delete("/cart");
+      await refreshCart();
+    } catch (e: unknown) {
+      handleUnauthorized(e);
+    }
+  };
+
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = items.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
 
   return (
     <CartContext.Provider
       value={{
-        ...state,
-        addToCart: (product, option) => dispatch({ type: "ADD_ITEM", product, option }),
-        incrementItem: (id) => dispatch({ type: "INCREMENT_ITEM", cartItemId: id }),
-        decrementItem: (id) => dispatch({ type: "DECREMENT_ITEM", cartItemId: id }),
-        removeItem: (id) => dispatch({ type: "REMOVE_ITEM", cartItemId: id }),
-        clearCart: () => dispatch({ type: "CLEAR_CART" }),
+        items,
+        isHydrated,
+        addToCart,
+        incrementItem,
+        decrementItem,
+        removeItem,
+        clearCart,
         totalItems,
         totalPrice,
+        refreshCart
       }}
     >
       {children}

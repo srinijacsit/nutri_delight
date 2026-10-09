@@ -1,25 +1,57 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Search, ShoppingBag } from "lucide-react";
-import { menu } from "@/lib/data/menu";
 import { BulkProductCard } from "@/components/ui/bulk-product-card";
 import { useBulkCart } from "@/contexts/bulk-cart-context";
-
-const CATEGORIES = ["All", ...Array.from(new Set(menu.map(item => item.category)))];
+import { Product, Category } from "@/lib/types";
+import { apiClient } from "@/lib/api/client";
 
 export default function BulkOrderPage() {
   const { totalItems, totalPrice, isHydrated } = useBulkCart();
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [menu, setMenu] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>(["All"]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCatalog() {
+      try {
+        const catData = (await apiClient.get("/categories")) as Category[];
+        const prodData = (await apiClient.get("/products")) as Product[];
+
+        const mappedProducts = prodData.map((p) => {
+          const cat = catData.find((c) => c.id === p.category_id);
+          return {
+            ...p,
+            category: cat?.name || '',
+          };
+        });
+
+        setMenu(mappedProducts);
+        setCategories(["All", ...catData.map((c) => c.name)]);
+      } catch (err) {
+        console.error("Failed to load catalog", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCatalog();
+  }, []);
+
   const filteredItems = menu.filter((item) => {
     const matchesCategory = activeCategory === "All" || item.category === activeCategory;
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           (item.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
     return matchesCategory && matchesSearch;
   });
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -50,7 +82,7 @@ export default function BulkOrderPage() {
           </div>
 
           <div className="flex justify-center gap-3 overflow-x-auto pb-2 snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0" style={{ scrollbarWidth: "none" }}>
-            {CATEGORIES.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
@@ -73,7 +105,7 @@ export default function BulkOrderPage() {
             <BulkProductCard key={item.id} product={item} />
           ))}
         </div>
-        
+
         {filteredItems.length === 0 && (
           <div className="text-center py-32 px-4" aria-live="polite">
             <div className="inline-flex h-20 w-20 items-center justify-center rounded-full bg-stone-100 text-stone-400 mb-6">

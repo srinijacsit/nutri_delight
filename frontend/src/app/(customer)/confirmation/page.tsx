@@ -3,46 +3,55 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { CheckCircle, ShoppingBag, ArrowRight } from "lucide-react";
+import { apiClient } from "@/lib/api/client";
+import { useRouter } from "next/navigation";
 
-interface OrderItem {
-  productId: string;
-  name: string;
-  option: string | null;
+interface ApiOrderItem {
+  product_name_snapshot: string;
+  option_name_snapshot?: string;
   quantity: number;
-  unitPrice: number;
-  lineTotal: number;
+  unit_price_snapshot: string | number;
+  option_price_snapshot?: string | number;
+  line_total: number;
 }
 
-interface OrderPayload {
-  customer: {
-    name: string;
-    phone: string;
-    notes: string;
-  };
-  items: OrderItem[];
-  summary: {
-    totalItems: number;
-    totalPrice: number;
-  };
+interface ApiOrder {
+  id: string;
+  order_number: string;
+  total: number;
+  customer_name_snapshot: string;
+  customer_phone_snapshot: string;
+  customer_notes?: string;
+  order_items?: ApiOrderItem[];
 }
 
 export default function ConfirmationPage() {
-  const [order, setOrder] = useState<OrderPayload | null>(null);
+  const [order, setOrder] = useState<ApiOrder | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    try {
-      const stored = sessionStorage.getItem("nutridelight-last-order");
-      if (stored) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setOrder(JSON.parse(stored));
+    async function loadOrder() {
+      try {
+        const stored = sessionStorage.getItem("nutridelight-last-order");
+        if (stored) {
+          const storedOrder = JSON.parse(stored);
+          if (storedOrder?.id) {
+            const fullOrder = await apiClient.get(`/orders/${storedOrder.id}`);
+            setOrder(fullOrder as ApiOrder);
+          }
+        }
+      } catch (e: unknown) {
+        console.error("Failed to load order", e);
+        if (typeof e === 'object' && e !== null && 'status' in e && (e as {status?: number}).status === 401) {
+          router.push('/login');
+        }
+      } finally {
+        setIsLoading(false);
       }
-    } catch (e) {
-      console.error("Failed to parse order", e);
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
+    loadOrder();
+  }, [router]);
 
   if (isLoading) {
     return <div className="min-h-screen bg-background"></div>;
@@ -77,9 +86,9 @@ export default function ConfirmationPage() {
           <div className="relative mx-auto w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mb-8 ring-8 ring-green-500/10">
             <CheckCircle className="w-10 h-10 text-green-600" />
           </div>
-          <h1 className="relative text-4xl font-extrabold text-foreground tracking-tight mb-4">Order Prepared</h1>
+          <h1 className="relative text-4xl font-extrabold text-foreground tracking-tight mb-4">Order Received!</h1>
           <p className="relative text-lg text-foreground/70 max-w-lg mx-auto">
-            Your order payload is ready for backend integration. We have saved your details locally for review.
+            Your order <strong>{order.order_number}</strong> has been successfully placed and is being prepared.
           </p>
         </div>
         
@@ -88,16 +97,16 @@ export default function ConfirmationPage() {
           <dl className="space-y-6 text-base">
             <div className="grid grid-cols-3 gap-4 border-b border-border pb-5">
               <dt className="text-foreground/60 font-bold col-span-1">Name</dt>
-              <dd className="text-foreground font-bold col-span-2">{order.customer.name}</dd>
+              <dd className="text-foreground font-bold col-span-2">{order.customer_name_snapshot}</dd>
             </div>
             <div className="grid grid-cols-3 gap-4 border-b border-border pb-5">
               <dt className="text-foreground/60 font-bold col-span-1">Phone</dt>
-              <dd className="text-foreground font-bold col-span-2">{order.customer.phone}</dd>
+              <dd className="text-foreground font-bold col-span-2">{order.customer_phone_snapshot}</dd>
             </div>
-            {order.customer.notes && (
+            {order.customer_notes && (
               <div className="grid grid-cols-3 gap-4 border-b border-border pb-5">
                 <dt className="text-foreground/60 font-bold col-span-1">Notes</dt>
-                <dd className="text-foreground font-bold col-span-2 italic">{order.customer.notes}</dd>
+                <dd className="text-foreground font-bold col-span-2 italic">{order.customer_notes}</dd>
               </div>
             )}
           </dl>
@@ -106,19 +115,19 @@ export default function ConfirmationPage() {
         <div className="bg-card rounded-[2rem] p-8 sm:p-10 border border-border shadow-sm mb-10">
           <h2 className="text-2xl font-extrabold text-foreground mb-8 tracking-tight">Order Summary</h2>
           <ul className="divide-y divide-border mb-8 border-b border-border">
-            {order.items.map((item, idx) => (
+            {order.order_items?.map((item, idx: number) => (
               <li key={idx} className="py-5 flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                 <div className="flex-1">
-                  <h4 className="text-base font-bold text-foreground">{item.name}</h4>
-                  {item.option && (
+                  <h4 className="text-base font-bold text-foreground">{item.product_name_snapshot}</h4>
+                  {item.option_name_snapshot && (
                     <p className="inline-block px-2 py-0.5 mt-1.5 rounded bg-primary/10 text-[11px] font-bold text-primary">
-                      + {item.option}
+                      + {item.option_name_snapshot}
                     </p>
                   )}
-                  <p className="text-sm font-medium text-foreground/60 mt-2">Qty: {item.quantity} × ₹{item.unitPrice}</p>
+                  <p className="text-sm font-medium text-foreground/60 mt-2">Qty: {item.quantity} × ₹{Number(item.unit_price_snapshot) + Number(item.option_price_snapshot || 0)}</p>
                 </div>
                 <div className="text-base font-extrabold text-foreground sm:text-right tracking-tight">
-                  ₹{item.lineTotal}
+                  ₹{item.line_total}
                 </div>
               </li>
             ))}
@@ -127,11 +136,11 @@ export default function ConfirmationPage() {
           <dl className="space-y-5 text-base text-foreground/70">
             <div className="flex justify-between">
               <dt className="font-medium">Total Items</dt>
-              <dd className="font-bold text-foreground">{order.summary.totalItems}</dd>
+              <dd className="font-bold text-foreground">{order.order_items?.reduce((sum: number, item) => sum + item.quantity, 0) || 0}</dd>
             </div>
             <div className="flex justify-between pt-5 border-t border-border">
               <dt className="text-lg font-bold text-foreground">Total Paid</dt>
-              <dd className="text-2xl font-extrabold text-foreground tracking-tight">₹{order.summary.totalPrice}</dd>
+              <dd className="text-2xl font-extrabold text-foreground tracking-tight">₹{order.total}</dd>
             </div>
           </dl>
         </div>

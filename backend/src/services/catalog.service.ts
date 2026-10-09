@@ -30,7 +30,7 @@ export class CatalogService {
     
     // Map to frontend shape
     return data.map((item: any) => ({
-      id: item.slug, // Frontend uses slug as ID generally, wait! Frontend `id` is slug
+      id: item.id,
       name: item.name,
       slug: item.slug,
       price: Number(item.price),
@@ -69,7 +69,7 @@ export class CatalogService {
     }
 
     return {
-      id: data.slug,
+      id: data.id,
       name: data.name,
       slug: data.slug,
       price: Number(data.price),
@@ -101,7 +101,7 @@ export class CatalogService {
     if (error) throw new Error(error.message);
 
     return data.map((item: any) => ({
-      id: item.slug,
+      id: item.id,
       name: item.name,
       slug: item.slug,
       price: Number(item.price),
